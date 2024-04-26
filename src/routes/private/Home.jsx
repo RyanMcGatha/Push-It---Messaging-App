@@ -1,8 +1,13 @@
 const Home = () => {
   return (
-    <div>
-      <h1>Home</h1>
-    </div>
+    <>
+      <div
+        className="bg-red-200 h-full"
+        style={{ maxWidth: "85vw", width: "85vw" }}
+      >
+        home
+      </div>
+    </>
   );
 };
 

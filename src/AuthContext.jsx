@@ -5,12 +5,12 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState("loading");
+  console.log(session);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
-    console.log(session);
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);

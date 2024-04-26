@@ -1,5 +1,7 @@
 import React from "react";
 import { useAuth } from "../AuthContext";
+import SignIn from "./public/SignIn";
+import PrivateLayout from "./private/PrivateLayout";
 import Home from "./private/Home";
 
 import {
@@ -7,7 +9,6 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import SignIn from "./public/SignIn";
 
 const Routes = () => {
   const { session } = useAuth();
