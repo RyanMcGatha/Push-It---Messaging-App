@@ -5,7 +5,6 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState("loading");
-  console.log(session);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

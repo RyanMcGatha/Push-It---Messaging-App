@@ -12,22 +12,22 @@ const SignIn = () => {
       renderImageBuffer={50}
       rotationRange={25}
       images={[
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
-        "pushit.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
+        "pushitt.png",
       ]}
     >
       <section className="h-screen bg-eucalyptus-950">
@@ -163,9 +163,9 @@ const Form = () => {
 const Logo = () => {
   return (
     <img
-      src="pushit.png"
+      src="pushitSlogan.png"
       alt="Sully's Logo"
-      className=" w-40 h-auto md:fixed md:left-5 md:top-5"
+      className=" w-52 h-auto md:fixed md:left-5 md:top-5"
     />
   );
 };

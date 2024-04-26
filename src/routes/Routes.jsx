@@ -9,6 +9,8 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import OneOnOne from "./private/OneOnOne";
+import Groups from "./private/Groups";
 
 const Routes = () => {
   const { session } = useAuth();
@@ -23,7 +25,11 @@ const Routes = () => {
     },
     {
       element: session ? <PrivateLayout /> : <Navigate to="/" />,
-      children: [{ path: "home", element: <Home /> }],
+      children: [
+        { path: "home", element: <Home /> },
+        { path: "ones", element: <OneOnOne /> },
+        { path: "groups", element: <Groups /> },
+      ],
     },
   ];
   const router = createBrowserRouter([...routes]);
