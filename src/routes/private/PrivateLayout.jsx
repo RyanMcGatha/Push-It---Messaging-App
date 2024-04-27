@@ -18,13 +18,12 @@ const PrivateLayout = () => {
               <span className="text-4xl font-semibold text-eucalyptus-200">
                 Push It!
               </span>
-              <image>
-                <img
-                  src="pushitt.png"
-                  alt="Push It! Logo"
-                  className=" w-20 h-auto p-1"
-                />
-              </image>
+
+              <img
+                src="pushitt.png"
+                alt="Push It! Logo"
+                className=" w-20 h-auto p-1"
+              />
             </div>
             <SearchBar />
           </nav>

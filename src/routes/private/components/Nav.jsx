@@ -5,17 +5,17 @@ import { useState, useEffect } from "react";
 
 const Nav = () => {
   const [user, setUser] = useState(null);
-
+  const [fullName, setFullName] = useState("");
   useEffect(() => {
     async function fetchUser() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      setFullName(user.user_metadata.full_name);
       setUser(user);
     }
     fetchUser();
   }, []);
-  console.log(user);
 
   return (
     <nav
@@ -30,7 +30,7 @@ const Nav = () => {
             className="w-full h-52 object-cover rounded-xl"
           />
           <a>
-            <h1 className="text-center pt-3"></h1>
+            <h1 className="text-center pt-3">{fullName}</h1>
           </a>
         </li>
         <li>

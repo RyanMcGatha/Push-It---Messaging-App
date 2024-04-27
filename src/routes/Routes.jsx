@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 import OneOnOne from "./private/OneOnOne";
 import Groups from "./private/Groups";
+import SignUp from "./public/SignUp";
 
 const Routes = () => {
   const { session } = useAuth();
@@ -22,6 +23,10 @@ const Routes = () => {
     {
       path: "/",
       element: session ? <Navigate to="home" /> : <SignIn />,
+    },
+    {
+      path: "/signup",
+      element: session ? <Navigate to="home" /> : <SignUp />,
     },
     {
       element: session ? <PrivateLayout /> : <Navigate to="/" />,

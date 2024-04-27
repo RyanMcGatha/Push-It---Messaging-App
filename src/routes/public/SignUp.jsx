@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 
 import { useAuth } from "../../AuthContext";
 import { supabase } from "../../../supabaseConfig";
-import { Navigate, redirect } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, Navigate, redirect } from "react-router-dom";
 
-const SignIn = () => {
+const SignUp = () => {
   return (
     <MouseImageTrail
       renderImageBuffer={50}
@@ -52,16 +51,27 @@ const Copy = () => {
 
 const Form = () => {
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName,
+          username: username,
+        },
+      },
     });
+    if (data) {
+      alert("Check your email for the confirmation link!");
+    }
     if (error) {
       alert(error.error_description || error.message);
     } else {
@@ -98,16 +108,52 @@ const Form = () => {
             variants={primaryVariants}
             className=" p-2 text-center text-4xl font-semibold"
           >
-            Sign In
+            Sign Up!
           </motion.h1>
           <motion.p
             variants={primaryVariants}
             className="p-2 text-center text-xl font-semibold"
           >
-            Sign in and just Push It!
+            Sign up and just Push It!
           </motion.p>
 
           <form onSubmit={handleLogin} className="w-full">
+            <motion.div variants={primaryVariants} className="mb-2 w-full">
+              <label
+                htmlFor="full-name-input"
+                className="mb-1 inline-block text-sm font-medium"
+              >
+                Full Name<span className="p-1 text-red-500">*</span>
+              </label>
+              <input
+                id="full-name-input"
+                type="name"
+                placeholder="Enter your full name"
+                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                required
+                value={fullName}
+                autoComplete="Full Name"
+                onChange={(event) => setFullName(event.target.value)}
+              />
+            </motion.div>
+            <motion.div variants={primaryVariants} className="mb-2 w-full">
+              <label
+                htmlFor="Username-input"
+                className="mb-1 inline-block text-sm font-medium"
+              >
+                Username<span className="p-1 text-red-500">*</span>
+              </label>
+              <input
+                id="username-input"
+                type="username"
+                placeholder="Enter a username"
+                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                required
+                value={username}
+                autoComplete="username"
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </motion.div>
             <motion.div variants={primaryVariants} className="mb-2 w-full">
               <label
                 htmlFor="email-input"
@@ -146,12 +192,9 @@ const Form = () => {
               />
             </motion.div>
             <div className="text-xs text-center flex justify-center gap-1">
-              Dont have an account?
-              <Link
-                to={"/signup"}
-                className=" underline hover:text-eucalyptus-800"
-              >
-                Sign Up!
+              Already have an account?
+              <Link to={"/"} className=" underline hover:text-eucalyptus-800">
+                Sign In!
               </Link>
             </div>
 
@@ -161,7 +204,7 @@ const Form = () => {
               type="submit"
               className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
             >
-              Sign In
+              Sign Up!
             </motion.button>
           </form>
         </div>
@@ -339,4 +382,4 @@ const MouseImageTrail = ({
   );
 };
 
-export default SignIn;
+export default SignUp;
