@@ -70,12 +70,38 @@ const Form = () => {
       },
     });
     if (data) {
-      alert("Check your email for the confirmation link!");
-    }
-    if (error) {
-      alert(error.error_description || error.message);
+      try {
+        const response = await fetch(
+          "https://us-east-2.aws.neurelo.com/rest/users/__one",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-API-KEY":
+                "neurelo_9wKFBp874Z5xFw6ZCfvhXSqSgTex8AMfFtbzo/QiN2YY06y/dMsNHIaJ2CwZl1cOQi8557DPajlhJBhVC5WeEMosw6fCveoxEC1tAxPnrPsy+SXgn5MvvsEu4rJokQ70wj2768SnKlo9xc1nzMNOb4GAh8iFOiY5ewFzHKn8SZOC9q1SQKjRAIRCo8r67u9R_CxGnNyh6AYukeKzNUW19xojRPoyOplJkTPOwod3TVmU=",
+            },
+            body: JSON.stringify({
+              user_id: 24,
+              email: email,
+              username: username,
+              password: password,
+            }),
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        if (data.error) {
+          alert(data.error);
+        } else {
+        }
+      } catch (error) {
+        console.log(error);
+        alert("An error occurred. Please try again later.");
+      }
     } else {
+      alert(error.error_description || error.message);
     }
+
     setLoading(false);
   };
 

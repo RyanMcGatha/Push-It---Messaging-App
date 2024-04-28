@@ -66,6 +66,20 @@ const Form = () => {
       alert(error.error_description || error.message);
     } else {
     }
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      console.log(user);
+    } catch (error) {
+      console.log(error);
+    }
+    if (error) {
+      alert(error.error_description || error.message);
+    }
+    if (user) {
+      redirect("/home");
+    }
     setLoading(false);
   };
 
