@@ -3,11 +3,8 @@ import SearchBar from "./components/SearchBar";
 import OnesCard from "./components/OnesCard";
 import AddChat from "./components/AddChat";
 
-const Home = ({ color = "white" }) => {
+const Home = () => {
   const [chats, setChats] = useState([]);
-  const [chatNames, setChatNames] = useState([]);
-  const [chatId, setChatId] = useState(null);
-  console.log(chatId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,10 +25,6 @@ const Home = ({ color = "white" }) => {
         }
         const { data } = await response.json();
         setChats(data);
-        const names = data.map((chat) => chat.chat_name);
-        setChatNames(names);
-        const ids = data.map((chat) => chat.chat_id);
-        setChatId(ids);
       } catch (error) {
         console.error("There was a problem with your fetch operation:", error);
       }
@@ -46,31 +39,42 @@ const Home = ({ color = "white" }) => {
         className="bg-eucalyptus-950 relative min-h-screen flex flex-col p-10 gap-10"
         style={{ maxWidth: "85vw", width: "85vw" }}
       >
-        <AddChat />
-        <div>
+        {/* <div>
           <h1 className="text-6xl text-eucalyptus-200">Pinned Convos</h1>
           <div className="h-full flex items-center p-7 gap-5">
-            {chatNames.map((name) => (
-              <OnesCard key={name} title={name} id /> // Assuming Card accepts a title prop
+            {chats.map((chat) => (
+              <OnesCard
+                key={chat.chat_id}
+                title={chat.chat_name}
+                id={chat.chat_id}
+              />
             ))}
           </div>
-        </div>
+        </div> */}
         <div>
           <h1 className="text-6xl text-eucalyptus-200">Recent one on one's</h1>
           <div className="h-full flex items-center p-7 gap-5">
-            {chatNames.map((name) => (
-              <OnesCard key={name} title={name} id={chatId} />
+            {chats.map((chat) => (
+              <OnesCard
+                key={chat.chat_id}
+                title={chat.chat_name}
+                id={chat.chat_id}
+              />
             ))}
           </div>
         </div>
-        <div>
+        {/* <div>
           <h1 className="text-6xl text-eucalyptus-200">Recent Groups</h1>
           <div className="h-full flex items-center p-7 gap-5">
-            {chatNames.map((name) => (
-              <OnesCard key={name} title={name} />
+            {chats.map((chat) => (
+              <OnesCard
+                key={chat.chat_id}
+                title={chat.chat_name}
+                id={chat.chat_id}
+              />
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
