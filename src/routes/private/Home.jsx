@@ -35,6 +35,7 @@ const Home = () => {
 
   return (
     <>
+      <AddChat />
       <div
         className="bg-eucalyptus-950 relative min-h-screen flex flex-col p-10 gap-10"
         style={{ maxWidth: "85vw", width: "85vw" }}

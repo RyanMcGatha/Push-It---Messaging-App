@@ -1,46 +1,19 @@
 import React, { useState, useEffect } from "react";
-import SearchBar from "./components/SearchBar";
-import { supabase } from "../../../supabaseConfig";
 import { useParams } from "react-router-dom";
+import { supabase } from "../../../supabaseConfig";
 
 const OneOnOne = () => {
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [userData, setUserData] = useState(null);
   const [message, setMessage] = useState("");
+  const [username, setUsername] = useState("");
   console.log(messages);
 
-  const sendMessage = async (event) => {
-    event.preventDefault();
-    if (!message) return;
-
-    try {
-      const response = await fetch(
-        `https://us-east-2.aws.neurelo.com/rest/messages/__one`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-KEY":
-              "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-          },
-          body: JSON.stringify({
-            chat_id: id,
-            message_text: message,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to post message");
-      }
-
-      const data = await response.json();
-      setMessages([...messages, data]);
-      setMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+  const apiHeaders = {
+    "Content-Type": "application/json",
+    "X-API-KEY":
+      "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
   };
 
   useEffect(() => {
@@ -50,18 +23,13 @@ const OneOnOne = () => {
           `https://us-east-2.aws.neurelo.com/custom/findMsg?chat_id=${id}`,
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-API-KEY":
-                "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-            },
+            headers: apiHeaders,
           }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch messages");
         }
         const result = await response.json();
-        console.log("Fetched data:", result.data);
         setMessages(result.data || []);
       } catch (error) {
         console.error("There was a problem with your fetch operation:", error);
@@ -71,16 +39,47 @@ const OneOnOne = () => {
     fetchData();
 
     const getUser = async () => {
-      const { data: user, error } = await supabase.auth.getUser();
+      const { data, error } = await supabase.auth.getUser();
       if (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error getting user:", error.message);
         return;
       }
-      setUserData(user.user);
+      setUserData(data);
+      setUsername(data.user.user_metadata.full_name);
     };
 
     getUser();
   }, [id]);
+
+  const handleSendMessage = async (event) => {
+    event.preventDefault();
+
+    try {
+      const body = JSON.stringify({
+        chat_id: Number(id),
+        message_text: message,
+        user_name: username,
+      });
+
+      const response = await fetch(
+        "https://us-east-2.aws.neurelo.com/rest/messages/__one",
+        {
+          method: "POST",
+          headers: apiHeaders,
+          body: body,
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message");
+      }
+      setMessages([result.data, ...messages]);
+      setMessage("");
+    } catch (error) {
+      console.error("There was a problem with your fetch operation:", error);
+    }
+  };
 
   return (
     <>
@@ -107,16 +106,15 @@ const OneOnOne = () => {
                 <div className="text-xl">
                   Message: <span className="p-1">{msg.message_text}</span>
                 </div>
-                {userData && (
-                  <div className="text-xl flex justify-end px-5">
-                    Sent by: <span className="pl-1">{userData.email}</span>
-                  </div>
-                )}
+
+                <div className="text-xl flex justify-end px-5">
+                  Sent by: <span className="pl-1">{msg.user_name}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
-        <form onSubmit={sendMessage} className="flex gap-2">
+        <form className="flex gap-2" onSubmit={handleSendMessage}>
           <input
             type="text"
             value={message}
@@ -124,7 +122,10 @@ const OneOnOne = () => {
             className="bg-eucalyptus-800 rounded-md text-3xl w-full p-3"
             placeholder="Type your message here"
           />
-          <button className="bg-eucalyptus-800 p-3 rounded-md text-3xl w-96">
+          <button
+            type="submit"
+            className="bg-eucalyptus-800 p-3 rounded-md text-3xl w-96"
+          >
             Push It!
           </button>
         </form>
