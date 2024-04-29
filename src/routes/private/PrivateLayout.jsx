@@ -27,6 +27,7 @@ const PrivateLayout = () => {
             </div>
             <SearchBar />
           </nav>
+
           <Outlet />
         </div>
       </div>

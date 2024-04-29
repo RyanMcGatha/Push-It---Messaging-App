@@ -7,7 +7,10 @@ import { supabase } from "../../../supabaseConfig";
 import { Link, Navigate, redirect } from "react-router-dom";
 
 const SignUp = () => {
-  return (
+  const { session } = useAuth();
+  return session ? (
+    <Navigate to={"/home"} />
+  ) : (
     <MouseImageTrail
       renderImageBuffer={50}
       rotationRange={25}
@@ -78,10 +81,9 @@ const Form = () => {
             headers: {
               "Content-Type": "application/json",
               "X-API-KEY":
-                "neurelo_9wKFBp874Z5xFw6ZCfvhXSqSgTex8AMfFtbzo/QiN2YY06y/dMsNHIaJ2CwZl1cOQi8557DPajlhJBhVC5WeEMosw6fCveoxEC1tAxPnrPsy+SXgn5MvvsEu4rJokQ70wj2768SnKlo9xc1nzMNOb4GAh8iFOiY5ewFzHKn8SZOC9q1SQKjRAIRCo8r67u9R_CxGnNyh6AYukeKzNUW19xojRPoyOplJkTPOwod3TVmU=",
+                "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
             },
             body: JSON.stringify({
-              user_id: 24,
               email: email,
               username: username,
               password: password,
@@ -91,15 +93,15 @@ const Form = () => {
         const data = await response.json();
         console.log(data);
         if (data.error) {
-          alert(data.error);
+          console.log(data.error);
         } else {
+          <Navigate to={"/"} />;
         }
       } catch (error) {
-        console.log(error);
-        alert("An error occurred. Please try again later.");
+        console.error("Request failed", error);
       }
     } else {
-      alert(error.error_description || error.message);
+      console.log(error.error_description || error.message);
     }
 
     setLoading(false);

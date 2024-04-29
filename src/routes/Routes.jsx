@@ -22,18 +22,20 @@ const Routes = () => {
   const routes = [
     {
       path: "/",
-      element: session ? <Navigate to="home" /> : <SignIn />,
+      element: session ? <Navigate to="/home" /> : <SignIn />,
     },
     {
       path: "/signup",
-      element: session ? <Navigate to="home" /> : <SignUp />,
+      element: session ? <Navigate to="/home" /> : <SignUp />,
     },
+
     {
       element: session ? <PrivateLayout /> : <Navigate to="/" />,
       children: [
-        { path: "home", element: <Home /> },
-        { path: "ones", element: <OneOnOne /> },
-        { path: "groups", element: <Groups /> },
+        { path: "/home", element: <Home /> },
+        { path: "/ones", element: <OneOnOne /> },
+        { path: "/groups", element: <Groups /> },
+        { path: "/ones/:id", element: <OneOnOne /> },
       ],
     },
   ];

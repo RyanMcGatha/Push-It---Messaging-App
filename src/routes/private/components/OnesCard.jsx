@@ -8,22 +8,26 @@ import {
 import { motion } from "framer-motion";
 import { AiFillMessage, AiOutlineMessage } from "react-icons/ai";
 import { BiSolidMessageSquareMinus } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
-const Card = () => {
-  return <ShimmerBorderCard />;
+const OnesCard = ({ key, title, id }) => {
+  return <ShimmerBorderCard key={key} title={title} id={id} />;
 };
 
-const ShimmerBorderCard = () => {
+const ShimmerBorderCard = ({ key, title, id }) => {
   return (
     <div className="group relative  w-full min-h-72 max-h-fit max-w-xs overflow-hidden rounded-lg bg-eucalyptus-400 p-0.5 transition-all duration-500 hover:scale-[1.01] hover:bg-eucalyptus-400/50">
       <div className="relative z-10 flex flex-col items-center justify-center overflow-hidden rounded-[7px] bg-eucalyptus-900 p-8 transition-colors duration-500 group-hover:bg-eucalyptus-900/50">
         <FiMessageCircle className="relative z-10 mb-10 mt-2 rounded-full border-2 border-eucalyptus-400 bg-eucalyptus-950 p-4 text-7xl text-eucalyptus-200" />
 
-        <h4 className="relative z-10 mb-4 w-full text-3xl font-bold text-eucalyptus-200">
-          Convo Name
+        <h4
+          className="relative z-10 mb-4 w-full text-3xl font-bold text-eucalyptus-200"
+          key={key}
+        >
+          {title}
         </h4>
         <p className="relative z-10 text-eucalyptus-300">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est ipsum
+          <Link to={`/ones/${id}`}>View</Link>
         </p>
       </div>
 
@@ -42,4 +46,4 @@ const ShimmerBorderCard = () => {
   );
 };
 
-export default Card;
+export default OnesCard;
