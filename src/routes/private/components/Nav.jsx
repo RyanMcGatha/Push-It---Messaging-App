@@ -30,18 +30,19 @@ const Nav = () => {
             className="w-full h-52 object-cover rounded-xl"
           />
           <a>
-            <h1 className="text-center pt-3">{fullName}</h1>
+            <h1 className="text-center pt-3 capitalize">Welcome</h1>
+            <h1 className="text-center pt-3 capitalize">{fullName}</h1>
           </a>
         </li>
         <li>
-          <Link to="home">Home</Link>
+          <Link to="home">All Chats</Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="ones">One on one's</Link>
         </li>
         <li>
           <Link to="groups">Groups</Link>
-        </li>
+        </li> */}
       </ul>
       <ul className="flex flex-col  h-fit gap-9 mb-3 text-eucalyptus-200 text-3xl border-t-eucalyptus-400 border-t-[1px] p-4">
         <li>

@@ -35,7 +35,7 @@ const Routes = () => {
         { path: "/home", element: <Home /> },
         { path: "/ones", element: <OneOnOne /> },
         { path: "/groups", element: <Groups /> },
-        { path: "/ones/:id", element: <OneOnOne /> },
+        { path: "/ones/:id/:usernames", element: <OneOnOne /> },
       ],
     },
   ];

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
+import { interpolate } from "framer-motion";
 
 const OneOnOne = () => {
-  const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [userData, setUserData] = useState(null);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
-  console.log(messages);
+  const { id, usernames } = useParams();
 
   const apiHeaders = {
     "Content-Type": "application/json",
@@ -19,23 +19,44 @@ const OneOnOne = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `https://us-east-2.aws.neurelo.com/custom/findMsg?chat_id=${id}`,
-          {
-            method: "GET",
-            headers: apiHeaders,
-          }
+        // Include 'message_text' in the select parameters
+        const selectParams = encodeURIComponent(
+          JSON.stringify({
+            chat_id: true,
+            user_name: true,
+            message_text: true, // Assuming 'message_text' is the field name
+          })
         );
+
+        // Dynamically create the filter parameters based on `id` and `usernames`
+        const filterParams = encodeURIComponent(
+          JSON.stringify({
+            chat_id: Number(id),
+          })
+        );
+        console.log(filterParams);
+
+        const url = `https://us-east-2.aws.neurelo.com/rest/messages?select=${selectParams}&filter=${filterParams}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "X-API-KEY":
+              "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch messages");
         }
+
         const result = await response.json();
-        setMessages(result.data || []);
+        setMessages(result.data);
       } catch (error) {
         console.error("There was a problem with your fetch operation:", error);
       }
     };
-
     fetchData();
 
     const getUser = async () => {

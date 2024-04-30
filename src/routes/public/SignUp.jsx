@@ -86,6 +86,7 @@ const Form = () => {
             body: JSON.stringify({
               email: email,
               username: username,
+              fullname: fullName,
               password: password,
             }),
           }
@@ -95,7 +96,7 @@ const Form = () => {
         if (data.error) {
           console.log(data.error);
         } else {
-          <Navigate to={"/"} />;
+          window.location.reload();
         }
       } catch (error) {
         console.error("Request failed", error);
