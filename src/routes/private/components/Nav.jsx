@@ -24,18 +24,18 @@ const Nav = () => {
     >
       <ul className="flex flex-col h-fit gap-10 text-eucalyptus-300 text-3xl p-4">
         <li>
-          <img
+          {/* <img
             src="https://via.placeholder.com/100"
             alt="avatar"
             className="w-full h-52 object-cover rounded-xl"
-          />
+          /> */}
           <a>
             <h1 className="text-center pt-3 capitalize">Welcome</h1>
             <h1 className="text-center pt-3 capitalize">{fullName}</h1>
           </a>
         </li>
-        <li>
-          <Link to="home">All Chats</Link>
+        <li className="pt-5 underline">
+          <Link to="home">View All Chats</Link>
         </li>
         {/* <li>
           <Link to="ones">One on one's</Link>
