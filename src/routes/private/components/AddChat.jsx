@@ -3,13 +3,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { RiFolderAddLine } from "react-icons/ri";
 import ReactSelect from "react-select";
 
-const AddChat = () => {
+const AddChat = ({ username }) => {
   const [loading, setLoading] = useState(false);
   const [usernames, setUsernames] = useState([]);
   const [chatData, setChatData] = useState({
     chat_name: "",
     is_group: false,
-    chat_members: [],
+    chat_members: [username],
   });
 
   const [isOpen, setIsOpen] = useState(false);

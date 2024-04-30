@@ -7,7 +7,6 @@ import { supabase } from "../../../supabaseConfig";
 const Home = () => {
   const [chats, setChats] = useState([]);
   const [username, setUsername] = useState("");
-  console.log(username);
 
   useEffect(() => {
     const getUser = async () => {
@@ -66,7 +65,7 @@ const Home = () => {
         style={{ maxWidth: "85vw", width: "85vw" }}
       >
         <div className="flex items-center w-full justify-end">
-          <AddChat />
+          <AddChat username={username} />
         </div>
 
         <div>
