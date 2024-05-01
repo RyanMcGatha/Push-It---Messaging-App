@@ -9,17 +9,18 @@ const AddChat = ({ username }) => {
   const [chatData, setChatData] = useState({
     chat_name: "",
     is_group: false,
-    chat_members: [username],
+    chat_members: [],
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const headers = {
+    "Content-Type": "application/json",
+    "X-API-KEY":
+      "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
+  };
+
   const fetchUsernames = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-      "X-API-KEY":
-        "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-    };
     try {
       const response = await fetch(
         "https://us-east-2.aws.neurelo.com/rest/users?",
@@ -47,15 +48,10 @@ const AddChat = ({ username }) => {
   const handleCreateChat = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const headers = {
-      "Content-Type": "application/json",
-      "X-API-KEY":
-        "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-    };
     const body = JSON.stringify({
       chat_name: chatData.chat_name,
-      is_group: Boolean(chatData.is_group),
-      user_names: chatData.chat_members,
+      is_group: chatData.is_group === "true",
+      user_names: [username, ...chatData.chat_members],
     });
 
     try {
@@ -63,8 +59,8 @@ const AddChat = ({ username }) => {
         "https://us-east-2.aws.neurelo.com/rest/chats/__one",
         {
           method: "POST",
-          headers: headers,
-          body: body,
+          headers,
+          body,
         }
       );
       const result = await response.json();
@@ -148,14 +144,14 @@ const ChatModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setIsOpen(false)}
-          className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 grid place-items-center overflow-y-scroll cursor-pointer"
+          className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 flex justify-center items-center overflow-y-scroll cursor-pointer"
         >
           <motion.div
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-gradient-to-br from-eucalyptus-800 to-eucalyptus-900 text-white p-6 rounded-lg w-full max-w-lg shadow-xl cursor-default relative "
+            className="bg-gradient-to-br from-eucalyptus-800 to-eucalyptus-950 text-eucalyptus-200 p-6 rounded-xl w-full max-w-lg shadow-xl cursor-default relative border-eucalyptus-400 border-4 "
           >
             <RiFolderAddLine className="text-white/10 rotate-12 text-[250px] absolute z-0 -top-24 -left-24" />
             <div className="relative z-10">
@@ -167,7 +163,7 @@ const ChatModal = ({
                 className="flex flex-col text-xl gap-2 p-10"
               >
                 <input
-                  className="rounded-xl p-3 placeholder:text-white focus:outline-red-500"
+                  className="rounded-xl p-3 placeholder-eucalyptus-200 focus:outline-eucalyptus-400"
                   style={{
                     backgroundColor: "rgba(255, 255, 255, 0.3)",
                     backdropFilter: "blur(15px)",
@@ -183,7 +179,7 @@ const ChatModal = ({
                   }
                 />
                 <select
-                  className="rounded-xl p-3 placeholder:text-white focus:outline-red-500"
+                  className="rounded-xl p-3 placeholder-eucalyptus-200 focus:outline-eucalyptus-400"
                   style={{
                     backgroundColor: "rgba(255, 255, 255, 0.3)",
                     backdropFilter: "blur(15px)",
@@ -210,16 +206,17 @@ const ChatModal = ({
                     control: (base) => ({
                       ...base,
                       backgroundColor: "rgba(255, 255, 255, 0.3)",
-                      borderRadius: "10px",
+                      borderRadius: "11px",
                       border: "2px solid white",
-                      color: "white",
-                      height: "fit-content",
-                      padding: "0 8px",
+                      padding: "5px",
+                      ":hover": {
+                        border: "2px solid #38f092",
+                      },
                     }),
                     option: (base, state) => ({
                       ...base,
                       backgroundColor: state.isFocused
-                        ? "rgba(100, 100, 255, 0.8)"
+                        ? "#38f092"
                         : "transparent",
                       color: "white",
                     }),
@@ -249,7 +246,7 @@ const ChatModal = ({
                       borderRadius: "10px",
                     }),
                   }}
-                  className="react-select-container"
+                  className=""
                   classNamePrefix="react-select"
                 />
 
@@ -257,14 +254,14 @@ const ChatModal = ({
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="bg-slate-500 hover:bg-white/10 transition-colors text-white font-semibold w-full p-2 rounded-xl whitespace-nowrap"
+                    className="bg-eucalyptus-800 text-eucalyptus-200 font-medium px-4 py-4 rounded-xl hover:bg-eucalyptus-700 transition-opacity text-2xl w-full"
                   >
                     Go Back
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-slate-500 hover:bg-white/10 transition-colors text-white font-semibold w-full p-2 rounded-xl whitespace-nowrap"
+                    className="bg-eucalyptus-800 text-eucalyptus-200 font-medium px-4 py-4 rounded-xl hover:bg-eucalyptus-700 transition-opacity text-2xl w-full"
                   >
                     {loading ? "Creating ..." : "Create Chat"}
                   </button>

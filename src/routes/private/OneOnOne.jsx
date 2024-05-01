@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
 import { interpolate } from "framer-motion";
@@ -9,6 +9,7 @@ const OneOnOne = () => {
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
   const { id, usernames } = useParams();
+  console.log(messages);
 
   const apiHeaders = {
     "Content-Type": "application/json",
@@ -24,7 +25,8 @@ const OneOnOne = () => {
           JSON.stringify({
             chat_id: true,
             user_name: true,
-            message_text: true, // Assuming 'message_text' is the field name
+            message_text: true,
+            timestamp: true,
           })
         );
 
@@ -34,7 +36,6 @@ const OneOnOne = () => {
             chat_id: Number(id),
           })
         );
-        console.log(filterParams);
 
         const url = `https://us-east-2.aws.neurelo.com/rest/messages?select=${selectParams}&filter=${filterParams}`;
 
@@ -95,57 +96,82 @@ const OneOnOne = () => {
       if (!response.ok) {
         throw new Error(result.error || "Failed to send message");
       }
-      setMessages([result.data, ...messages]);
+      // Append the new message to the end of the messages array
+      setMessages([...messages, result.data]);
       setMessage("");
     } catch (error) {
       console.error("There was a problem with your fetch operation:", error);
     }
   };
 
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // Scrolls to the bottom every time the messages array changes
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <>
-      <div
-        className="bg-eucalyptus-950 flex flex-col p-10 gap-10 text-eucalyptus-200 overflow-hidden"
-        style={{ maxWidth: "85vw", width: "85vw" }}
-      >
+      <div className="bg-eucalyptus-950 flex flex-col p-4 sm:p-8 md:p-10 gap-4 sm:gap-6 md:gap-10 text-eucalyptus-200 overflow-hidden h-screen">
         <div
-          className="flex flex-col bg-eucalyptus-900 items-center gap-2 p-2 no-scrollbar text-3xl"
+          className="flex flex-col bg-eucalyptus-900 items-center gap-2 p-2 sm:p-4 md:p-2 no-scrollbar text-xl sm:text-2xl md:text-3xl "
           style={{
-            maxWidth: "80vw",
-            width: "80vw",
-            height: "65vh",
+            maxWidth: "100%",
+            width: "100%",
+            height: "75vh",
             overflowY: "scroll",
           }}
         >
           <h2>Messages</h2>
-          <div className="w-full flex flex-col gap-2">
+          <div
+            className="w-full flex flex-col gap-2 overflow-y-auto"
+            ref={containerRef}
+          >
             {messages.map((msg) => (
               <div
                 key={msg.message_id}
-                className="p-2 w-full bg-eucalyptus-800 flex flex-col gap-1 rounded-md"
+                className="p-5 w-full bg-eucalyptus-800 flex flex-col rounded-md"
               >
-                <div className="text-xl">
-                  Message: <span className="p-1">{msg.message_text}</span>
+                <div className="text-xl sm:text-2xl md:text-3xl">
+                  <span className="p-1 flex flex-col gap-2 items-start">
+                    <a className="">Message:</a>
+                    <a className="capitalize text-5xl pl-1">
+                      {msg.message_text}
+                    </a>
+                  </span>
                 </div>
 
-                <div className="text-xl flex justify-end px-5">
-                  Sent by: <span className="pl-1">{msg.user_name}</span>
+                <div className="text-lg sm:text-xl md:text-xl pt-5">
+                  <span className="p-1 flex items-center justify-end">
+                    <a className="p-1">Sent by:</a>
+                    <a className="capitalize ">{msg.user_name}</a>
+                  </span>
+                  <span className="p-1 flex items-center justify-end">
+                    <a className="p-1">Sent at:</a>
+                    {new Date(msg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <form className="flex gap-2" onSubmit={handleSendMessage}>
+        <form className="flex gap-2 h-20" onSubmit={handleSendMessage}>
           <input
             type="text"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            className="bg-eucalyptus-800 rounded-md text-3xl w-full p-3"
+            className="bg-eucalyptus-800 rounded-md text-xl sm:text-2xl md:text-3xl w-full p-3"
             placeholder="Type your message here"
           />
           <button
             type="submit"
-            className="bg-eucalyptus-800 p-3 rounded-md text-3xl w-96"
+            className="bg-eucalyptus-800 p-2 sm:p-3 md:p-3 rounded-md text-xl sm:text-2xl md:text-3xl w-auto sm:w-80 md:w-96"
           >
             Push It!
           </button>

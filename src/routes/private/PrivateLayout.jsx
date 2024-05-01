@@ -1,31 +1,30 @@
 import { Outlet } from "react-router-dom";
 import Nav from "./components/Nav";
 import SearchBar from "./components/SearchBar";
+import MobileNav from "./components/MobileNav";
 
 const PrivateLayout = () => {
   return (
     <>
-      <div className="w-screen h-screen flex border-eucalyptus-400 border-[1px] bg-eucalyptus-950 overflow-hidden">
-        <nav className="">
+      <div className="w-screen h-screen flex border-eucalyptus-400 border-[1px] bg-eucalyptus-950 ">
+        <div className="hidden">
           <Nav />
-        </nav>
-        <div className="">
-          <nav
-            className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl px-10 py-3 justify-between border-b-eucalyptus-400 border-b-[1px]"
-            style={{ maxWidth: "85vw", width: "85vw" }}
-          >
-            <div className="flex items-center gap-2">
+        </div>
+        <div className="flex flex-col w-full h-full">
+          <nav className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl py-3 md:pl-5 border-b-eucalyptus-400 border-b-[1px] justify-around md:justify-start">
+            <a className="md:pr-5">
+              <MobileNav />
+            </a>
+            <div className="flex justify-center items-center gap-2">
               <span className="text-4xl font-semibold text-eucalyptus-200">
                 Push It!
               </span>
-
               <img
                 src="pushitt.png"
                 alt="Push It! Logo"
                 className=" w-20 h-auto p-1"
               />
             </div>
-            <SearchBar />
           </nav>
 
           <Outlet />

@@ -10,12 +10,25 @@ const OnesCard = ({ id, title, usernames }) => {
 
 const ShimmerBorderCard = ({ id, title, usernames }) => {
   return (
-    <div className="group relative overflow-hidden rounded-md bg-eucalyptus-400 transition-all duration-500 flex items-center justify-center flex-col w-72 md:w-96 h-fit border-eucalyptus-400 border-4">
+    <div className="group relative overflow-hidden rounded-md bg-eucalyptus-400 transition-all duration-500 flex items-center justify-center flex-col w-72 h-fit border-eucalyptus-400 border-4">
       <div className="bg-eucalyptus-900 transition-colors duration-500 group-hover:bg-eucalyptus-900/50 flex flex-col items-center p-4 w-full h-full">
         <FiMessageCircle className="z-10 rounded-full border-2 border-eucalyptus-400 bg-eucalyptus-950 p-4 text-7xl text-eucalyptus-200 my-2" />
-        <p className="z-10 text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2">
-          {title}
+        <p className="z-10 text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2 text-center">
+          Chat Name: <br />
+          <span className="text-eucalyptus-400 text-lg">{title}</span>
         </p>
+        <p className="z-10 text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2 text-center flex flex-col">
+          Chat Members:
+          <div className="flex gap-1">
+            {usernames.map((name, index) => (
+              <span key={index} className="text-eucalyptus-400 text-lg">
+                {name}
+                {index < usernames.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          </div>
+        </p>
+
         <p className="z-10 text-eucalyptus-200 text-lg md:text-xl underline hover:text-eucalyptus-400">
           <Link to={`/ones/${id}/${usernames}`}>View Conversation</Link>
         </p>

@@ -18,38 +18,27 @@ const Nav = () => {
   }, []);
 
   return (
-    <nav
-      className="h-full bg-eucalyptus-900 flex flex-col justify-between  border-r-eucalyptus-400 border-r-[1px]"
-      style={{ maxWidth: "15vw", width: "15vw" }}
-    >
-      <ul className="flex flex-col h-fit gap-10 text-eucalyptus-300 text-3xl p-4">
-        <li>
-          {/* <img
-            src="https://via.placeholder.com/100"
-            alt="avatar"
-            className="w-full h-52 object-cover rounded-xl"
-          /> */}
-          <a>
-            <h1 className="text-center pt-3 capitalize">Welcome</h1>
-            <h1 className="text-center pt-3 capitalize">{fullName}</h1>
-          </a>
+    <nav className="h-screen bg-eucalyptus-900 flex flex-col justify-between  border-r-eucalyptus-400 border-r-[1px]">
+      <ul className="flex flex-col h-fit gap-10 text-eucalyptus-200 text-4xl p-4 items-center text-center">
+        <li className="text-6xl">
+          <h1 className="text-center pt-3 capitalize">Welcome</h1>
+          <h1 className="text-center pt-5 capitalize">{fullName}</h1>
         </li>
-        <li className="pt-5 underline">
+        <li className="pt-10 underline">
           <Link to="home">View All Chats</Link>
         </li>
-        {/* <li>
+        <li className="pt-10 underline">
           <Link to="ones">One on one's</Link>
         </li>
-        <li>
+        <li className="pt-10 underline">
           <Link to="groups">Groups</Link>
-        </li> */}
-      </ul>
-      <ul className="flex flex-col  h-fit gap-9 mb-3 text-eucalyptus-200 text-3xl border-t-eucalyptus-400 border-t-[1px] p-4">
-        <li>
-          <Link to="setting">Settings</Link>
         </li>
+      </ul>
+      <ul className="flex flex-col gap-9 mb-5 text-center  text-eucalyptus-200 text-4xl border-t-eucalyptus-400 border-t-[1px] p-6">
         <li>
-          <button onClick={() => supabase.auth.signOut()}>Sign Out</button>
+          <button className="underline" onClick={() => supabase.auth.signOut()}>
+            Sign Out
+          </button>
         </li>
       </ul>
     </nav>

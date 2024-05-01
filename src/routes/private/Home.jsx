@@ -3,6 +3,7 @@ import SearchBar from "./components/SearchBar";
 import OnesCard from "./components/OnesCard";
 import AddChat from "./components/AddChat";
 import { supabase } from "../../../supabaseConfig";
+import MobileNav from "./components/MobileNav";
 
 const Home = () => {
   const [chats, setChats] = useState([]);
@@ -60,19 +61,18 @@ const Home = () => {
 
   return (
     <>
-      <div
-        className="bg-eucalyptus-950 flex flex-col p-5 overflow-scroll max-h-screen"
-        style={{ maxWidth: "85vw", width: "85vw" }}
-      >
-        <div className="flex items-center w-full justify-end">
-          <AddChat username={username} />
-        </div>
+      <div className="bg-eucalyptus-950 flex flex-col p-2 sm:p-4 md:p-5 overflow-y-scroll max-h-screen no-scrollbar">
+        <div className="flex flex-col items-center md:items-start">
+          <div className="flex justify-center md:justify-end w-full p-2">
+            <a>
+              <AddChat username={username} />
+            </a>
+          </div>
 
-        <div>
-          <h1 className="text-6xl text-eucalyptus-200 mt-5">
-            Recent one on one's
+          <h1 className="text-center md:text-left text-eucalyptus-200 text-2xl sm:text-3xl md:text-4xl lg:text-6xl pt-3 sm:pt-4 md:pt-5">
+            One on one's
           </h1>
-          <div className="h-full flex items-center p-7 gap-5 ">
+          <div className="flex items-center justify-center md:justify-start w-full p-3 md:p-7 gap-5 md:gap-8 flex-wrap">
             {chats
               .filter((chat) => !chat.is_group)
               .map((chat) => (
@@ -84,10 +84,10 @@ const Home = () => {
                 />
               ))}
           </div>
-        </div>
-        <div className="mb-20">
-          <h1 className="text-6xl text-eucalyptus-200 mt-5">Recent Groups</h1>
-          <div className="h-full flex items-center p-7 gap-5 ">
+          <h1 className="text-center md:text-left text-eucalyptus-200 text-2xl sm:text-3xl md:text-4xl lg:text-6xl pt-3 sm:pt-4 md:pt-5">
+            Groups
+          </h1>
+          <div className="flex items-center justify-center md:justify-start w-full p-3 md:p-7 gap-3 md:gap-5 flex-wrap mb-28">
             {chats
               .filter((chat) => chat.is_group)
               .map((chat) => (

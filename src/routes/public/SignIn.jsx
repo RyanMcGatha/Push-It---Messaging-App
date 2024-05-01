@@ -70,7 +70,6 @@ const Form = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      console.log(user);
     } catch (error) {
       console.log(error);
     }
@@ -85,101 +84,94 @@ const Form = () => {
 
   return (
     <>
-      <style>
-        {`
-        @media (min-width: 1024px) {
-          .scale-on-large {
-            transform: scale(1.5);
-          }
-        }
-      `}
-      </style>
-      <motion.div
-        initial="initial"
-        whileInView="animate"
-        transition={{
-          staggerChildren: 0.05,
-        }}
-        viewport={{ once: true }}
-        className="scale-125 w-auto max-h-fit p-20  rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
-        style={{
-          backgroundAttachment: "fixed",
-          backdropFilter: "blur(15px)",
-        }}
-      >
-        <div className="mx-auto my-auto p-10 text-eucalyptus-200 scale-150">
-          <motion.h1
-            variants={primaryVariants}
-            className=" p-2 text-center text-4xl font-semibold"
-          >
-            Sign In
-          </motion.h1>
-          <motion.p
-            variants={primaryVariants}
-            className="p-2 text-center text-xl font-semibold"
-          >
-            Sign in and just Push It!
-          </motion.p>
-
-          <form onSubmit={handleLogin} className="w-full">
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="email-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Email<span className="p-1 text-red-500">*</span>
-              </label>
-              <input
-                id="email-input"
-                type="email"
-                placeholder="Enter your email"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={email}
-                autoComplete="email"
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </motion.div>
-
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="password-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Password<span className=" pl-1 text-red-500">*</span>
-              </label>
-              <input
-                id="password-input"
-                type="password"
-                placeholder="Enter your password"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={password}
-                autoComplete="current-password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </motion.div>
-            <div className="text-xs text-center flex justify-center gap-1">
-              Dont have an account?
-              <Link
-                to={"/signup"}
-                className=" underline hover:text-eucalyptus-800"
-              >
-                Sign Up!
-              </Link>
-            </div>
-
-            <motion.button
+      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-[1.8]">
+        <motion.div
+          initial="initial"
+          whileInView="animate"
+          transition={{
+            staggerChildren: 0.05,
+          }}
+          viewport={{ once: true }}
+          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
+          style={{
+            backgroundAttachment: "fixed",
+            backdropFilter: "blur(15px)",
+          }}
+        >
+          <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
+            <motion.h1
               variants={primaryVariants}
-              whileTap={{ scale: 0.985 }}
-              type="submit"
-              className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
+              className=" p-2 text-center text-4xl font-semibold"
             >
               Sign In
-            </motion.button>
-          </form>
-        </div>
-      </motion.div>
+            </motion.h1>
+            <motion.p
+              variants={primaryVariants}
+              className="p-2 text-center text-xl font-semibold"
+            >
+              Sign in and just Push It!
+            </motion.p>
+
+            <form onSubmit={handleLogin} className="w-full">
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="email-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Email<span className="p-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="email-input"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={email}
+                  autoComplete="email"
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </motion.div>
+
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="password-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Password<span className=" pl-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="password-input"
+                  type="password"
+                  placeholder="Enter your password"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={password}
+                  autoComplete="current-password"
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </motion.div>
+              <div className="text-xs text-center flex justify-center gap-1">
+                Dont have an account?
+                <Link
+                  to={"/signup"}
+                  className=" underline hover:text-eucalyptus-800"
+                >
+                  Sign Up!
+                </Link>
+              </div>
+
+              <motion.button
+                variants={primaryVariants}
+                whileTap={{ scale: 0.985 }}
+                type="submit"
+                className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
+              >
+                Sign In
+              </motion.button>
+            </form>
+          </div>
+        </motion.div>
+      </div>
     </>
   );
 };
@@ -189,7 +181,7 @@ const Logo = () => {
     <img
       src="pushitSlogan.png"
       alt="Sully's Logo"
-      className=" w-52 h-auto md:fixed md:left-5 md:top-5"
+      className=" w-64 mt-5 h-auto md:fixed md:left-5 md:top-5 m-3  "
     />
   );
 };
