@@ -44,7 +44,7 @@ const SignUp = () => {
 
 const Copy = () => {
   return (
-    <section className="z-[999999] fixed flex flex-col w-screen max-h-screen items-center md:justify-center ">
+    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
       <Logo />
 
       <Form />
