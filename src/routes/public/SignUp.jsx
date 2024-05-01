@@ -44,7 +44,7 @@ const SignUp = () => {
 
 const Copy = () => {
   return (
-    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
+    <section className="z-[999999] fixed flex flex-col w-screen max-h-screen items-center md:justify-center ">
       <Logo />
 
       <Form />
@@ -110,134 +110,127 @@ const Form = () => {
 
   return (
     <>
-      <style>
-        {`
-        @media (min-width: 1024px) {
-          .scale-on-large {
-            transform: scale(1.5);
-          }
-        }
-      `}
-      </style>
-      <motion.div
-        initial="initial"
-        whileInView="animate"
-        transition={{
-          staggerChildren: 0.05,
-        }}
-        viewport={{ once: true }}
-        className="scale-125 w-auto max-h-fit p-20  rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
-        style={{
-          backgroundAttachment: "fixed",
-          backdropFilter: "blur(15px)",
-        }}
-      >
-        <div className="mx-auto my-auto p-10 text-eucalyptus-200 scale-150">
-          <motion.h1
-            variants={primaryVariants}
-            className=" p-2 text-center text-4xl font-semibold"
-          >
-            Sign Up!
-          </motion.h1>
-          <motion.p
-            variants={primaryVariants}
-            className="p-2 text-center text-xl font-semibold"
-          >
-            Sign up and just Push It!
-          </motion.p>
-
-          <form onSubmit={handleLogin} className="w-full">
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="full-name-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Full Name<span className="p-1 text-red-500">*</span>
-              </label>
-              <input
-                id="full-name-input"
-                type="name"
-                placeholder="Enter your full name"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={fullName}
-                autoComplete="Full Name"
-                onChange={(event) => setFullName(event.target.value)}
-              />
-            </motion.div>
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="Username-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Username<span className="p-1 text-red-500">*</span>
-              </label>
-              <input
-                id="username-input"
-                type="username"
-                placeholder="Enter a username"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={username}
-                autoComplete="username"
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </motion.div>
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="email-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Email<span className="p-1 text-red-500">*</span>
-              </label>
-              <input
-                id="email-input"
-                type="email"
-                placeholder="Enter your email"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={email}
-                autoComplete="email"
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </motion.div>
-
-            <motion.div variants={primaryVariants} className="mb-2 w-full">
-              <label
-                htmlFor="password-input"
-                className="mb-1 inline-block text-sm font-medium"
-              >
-                Password<span className=" pl-1 text-red-500">*</span>
-              </label>
-              <input
-                id="password-input"
-                type="password"
-                placeholder="Enter your password"
-                className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                required
-                value={password}
-                autoComplete="current-password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </motion.div>
-            <div className="text-xs text-center flex justify-center gap-1">
-              Already have an account?
-              <Link to={"/"} className=" underline hover:text-eucalyptus-800">
-                Sign In!
-              </Link>
-            </div>
-
-            <motion.button
+      <div className="scale-95 md:scale-110 lg:scale-125 xl:scale-[1.8]">
+        <motion.div
+          initial="initial"
+          whileInView="animate"
+          transition={{
+            staggerChildren: 0.05,
+          }}
+          viewport={{ once: true }}
+          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
+          style={{
+            backgroundAttachment: "fixed",
+            backdropFilter: "blur(15px)",
+          }}
+        >
+          <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
+            <motion.h1
               variants={primaryVariants}
-              whileTap={{ scale: 0.985 }}
-              type="submit"
-              className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
+              className=" p-2 text-center text-4xl font-semibold"
             >
               Sign Up!
-            </motion.button>
-          </form>
-        </div>
-      </motion.div>
+            </motion.h1>
+            <motion.p
+              variants={primaryVariants}
+              className="p-2 text-center text-xl font-semibold"
+            >
+              Sign up and just Push It!
+            </motion.p>
+
+            <form onSubmit={handleLogin} className="w-full">
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="full-name-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Full Name<span className="p-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="full-name-input"
+                  type="name"
+                  placeholder="Enter your full name"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={fullName}
+                  autoComplete="Full Name"
+                  onChange={(event) => setFullName(event.target.value)}
+                />
+              </motion.div>
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="Username-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Username<span className="p-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="username-input"
+                  type="username"
+                  placeholder="Enter a username"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={username}
+                  autoComplete="username"
+                  onChange={(event) => setUsername(event.target.value)}
+                />
+              </motion.div>
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="email-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Email<span className="p-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="email-input"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={email}
+                  autoComplete="email"
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </motion.div>
+
+              <motion.div variants={primaryVariants} className="mb-2 w-full">
+                <label
+                  htmlFor="password-input"
+                  className="mb-1 inline-block text-sm font-medium"
+                >
+                  Password<span className=" pl-1 text-red-500">*</span>
+                </label>
+                <input
+                  id="password-input"
+                  type="password"
+                  placeholder="Enter your password"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  required
+                  value={password}
+                  autoComplete="current-password"
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </motion.div>
+              <div className="text-xs text-center flex justify-center gap-1">
+                Already have an account?
+                <Link to={"/"} className=" underline hover:text-eucalyptus-800">
+                  Sign In!
+                </Link>
+              </div>
+
+              <motion.button
+                variants={primaryVariants}
+                whileTap={{ scale: 0.985 }}
+                type="submit"
+                className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
+              >
+                Sign Up!
+              </motion.button>
+            </form>
+          </div>
+        </motion.div>
+      </div>
     </>
   );
 };
