@@ -20,7 +20,6 @@ const OneOnOne = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Include 'message_text' in the select parameters
         const selectParams = encodeURIComponent(
           JSON.stringify({
             chat_id: true,
@@ -30,7 +29,6 @@ const OneOnOne = () => {
           })
         );
 
-        // Dynamically create the filter parameters based on `id` and `usernames`
         const filterParams = encodeURIComponent(
           JSON.stringify({
             chat_id: Number(id),
@@ -96,7 +94,7 @@ const OneOnOne = () => {
       if (!response.ok) {
         throw new Error(result.error || "Failed to send message");
       }
-      // Append the new message to the end of the messages array
+
       setMessages([...messages, result.data]);
       setMessage("");
     } catch (error) {
@@ -107,7 +105,6 @@ const OneOnOne = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // Scrolls to the bottom every time the messages array changes
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }

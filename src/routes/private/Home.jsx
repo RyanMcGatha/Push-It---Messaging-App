@@ -24,7 +24,6 @@ const Home = () => {
 
   useEffect(() => {
     if (username) {
-      // Only fetch chats if the username is known
       const fetchData = async () => {
         try {
           const response = await fetch(
@@ -42,7 +41,7 @@ const Home = () => {
             throw new Error("Network response was not ok");
           }
           const { data } = await response.json();
-          // Filter chats to include only those that have the current user's username
+
           const relevantChats = data.filter((chat) =>
             chat.user_names.includes(username)
           );
@@ -57,7 +56,7 @@ const Home = () => {
 
       fetchData();
     }
-  }, [username]); // Depend on username so we refetch whenever it changes
+  }, [username]);
 
   return (
     <>

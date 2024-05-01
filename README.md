@@ -1,8 +1,27 @@
-# React + Vite
+# Push It - Messaging App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Push It is a messaging application designed to provide a secure and user-friendly platform for both personal and group communications. Built with PostgreSQL, Neurelo's auto-generated APIs, and React.js, this app offers robust functionality for messaging needs.
 
-Currently, two official plugins are available:
+Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User Authentication:
+  - Secure login system to protect user accounts.
+- Messaging:
+  - Users can send and receive messages.
+- Group Chats:
+  - Users can create and manage group chats for collaborative communication.
+- Direct Messaging:
+  - Users can engage in private conversations with other users.
+- User-Protected Chats:
+  - Each chat is secured and accessible only by the chat participants.
+- JWT Token-Protected Routes:
+  - Enhanced security for API routes using JWT tokens.
+
+Technologies Used
+
+- Backend:
+  - PostgreSQL, Neurelo
+  - Utilizes Neurelo's platform to generate REST and GraphQL APIs dynamically.
+- Frontend:
+  - React.js
+  - Provides a responsive and interactive user interface.
