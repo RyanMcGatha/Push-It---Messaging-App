@@ -33,7 +33,7 @@ const SignUp = () => {
         "pushitt.png",
       ]}
     >
-      <section className="h-screen bg-eucalyptus-950">
+      <section className="h-screen w-screen bg-eucalyptus-950">
         <Copy />
 
         <WatermarkWrapper />
@@ -44,7 +44,7 @@ const SignUp = () => {
 
 const Copy = () => {
   return (
-    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
+    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center ">
       <Logo />
 
       <Form />
@@ -110,7 +110,7 @@ const Form = () => {
 
   return (
     <>
-      <div className="scale-95 md:scale-110 lg:scale-125 xl:scale-[1.8]">
+      <div className="md:scale-125">
         <motion.div
           initial="initial"
           whileInView="animate"

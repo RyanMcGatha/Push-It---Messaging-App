@@ -2,14 +2,44 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
 import { interpolate } from "framer-motion";
+import { createClient } from "@supabase/supabase-js";
 
 const OneOnOne = () => {
   const [messages, setMessages] = useState([]);
   const [userData, setUserData] = useState(null);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
-  const { id, usernames } = useParams();
   console.log(messages);
+  const [channel, setChannel] = useState(null);
+  const { id, usernames } = useParams();
+  useEffect(() => {
+    const channel = supabase.channel(`room-${id}`, {
+      config: {
+        broadcast: { self: true, ack: "true" },
+      },
+    });
+
+    channel.on("broadcast", { event: "new-message" }, (payload) =>
+      setMessages([...messages, payload.message])
+    );
+
+    channel
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "messages" },
+        (payload) => {
+          handleSendMessage(payload);
+        }
+      )
+      .subscribe();
+
+    setChannel(channel);
+
+    return () => {
+      channel.unsubscribe();
+      setChannel(null);
+    };
+  }, [id]);
 
   const apiHeaders = {
     "Content-Type": "application/json",
@@ -18,45 +48,60 @@ const OneOnOne = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const selectParams = encodeURIComponent(
-          JSON.stringify({
-            chat_id: true,
-            user_name: true,
-            message_text: true,
-            timestamp: true,
-          })
-        );
+    // const fetchData = async () => {
+    //   try {
+    //     const selectParams = encodeURIComponent(
+    //       JSON.stringify({
+    //         chat_id: true,
+    //         user_name: true,
+    //         message_text: true,
+    //         timestamp: true,
+    //       })
+    //     );
 
-        const filterParams = encodeURIComponent(
-          JSON.stringify({
-            chat_id: Number(id),
-          })
-        );
+    //     const filterParams = encodeURIComponent(
+    //       JSON.stringify({
+    //         chat_id: Number(id),
+    //       })
+    //     );
 
-        const url = `https://us-east-2.aws.neurelo.com/rest/messages?select=${selectParams}&filter=${filterParams}`;
+    //     const url = `https://us-east-2.aws.neurelo.com/rest/messages?select=${selectParams}&filter=${filterParams}`;
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "X-API-KEY":
-              "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-            "Content-Type": "application/json",
-          },
-        });
+    //     const response = await fetch(url, {
+    //       method: "GET",
+    //       headers: {
+    //         "X-API-KEY":
+    //           "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
+    //         "Content-Type": "application/json",
+    //       },
+    //     });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch messages");
-        }
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch messages");
+    //     }
 
-        const result = await response.json();
-        setMessages(result.data);
-      } catch (error) {
-        console.error("There was a problem with your fetch operation:", error);
+    //     const result = await response.json();
+    //     setMessages(result.data);
+    //   } catch (error) {
+    //     console.error("There was a problem with your fetch operation:", error);
+    //   }
+    // };
+    // fetchData();
+
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .eq("chat_id", id);
+
+      if (error) {
+        console.error("Error fetching messages:", error.message);
+      } else {
+        setMessages(data);
       }
     };
-    fetchData();
+
+    fetchMessages();
 
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -74,32 +119,32 @@ const OneOnOne = () => {
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
-    try {
-      const body = JSON.stringify({
-        chat_id: Number(id),
-        message_text: message,
-        user_name: username,
-      });
+    // try {
+    //   const body = JSON.stringify({
+    //     chat_id: Number(id),
+    //     message_text: message,
+    //     user_name: username,
+    //   });
 
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/messages/__one",
-        {
-          method: "POST",
-          headers: apiHeaders,
-          body: body,
-        }
-      );
+    //   const response = await fetch(
+    //     "https://us-east-2.aws.neurelo.com/rest/messages/__one",
+    //     {
+    //       method: "POST",
+    //       headers: apiHeaders,
+    //       body: body,
+    //     }
+    //   );
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to send message");
-      }
+    //   const result = await response.json();
+    //   if (!response.ok) {
+    //     throw new Error(result.error || "Failed to send message");
+    //   }
 
-      setMessages([...messages, result.data]);
-      setMessage("");
-    } catch (error) {
-      console.error("There was a problem with your fetch operation:", error);
-    }
+    //   setMessages([...messages, result.data]);
+    //   setMessage("");
+    // } catch (error) {
+    //   console.error("There was a problem with your fetch operation:", error);
+    // }
   };
 
   const containerRef = useRef(null);
@@ -129,15 +174,13 @@ const OneOnOne = () => {
           >
             {messages.map((msg) => (
               <div
-                key={msg.message_id}
+                key={msg.id}
                 className="p-5 w-full bg-eucalyptus-800 flex flex-col rounded-md"
               >
                 <div className="text-xl sm:text-2xl md:text-3xl">
                   <span className="p-1 flex flex-col gap-2 items-start">
                     <a className="">Message:</a>
-                    <a className="capitalize text-5xl pl-1">
-                      {msg.message_text}
-                    </a>
+                    <a className="capitalize text-5xl pl-1">{msg.messages}</a>
                   </span>
                 </div>
 

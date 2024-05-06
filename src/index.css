@@ -12,7 +12,7 @@
 }
 
 :root {
-  overflow-x: hidden;
+  overflow: hidden;
   background: #0c5b35;
   max-height: 100vh;
 }
