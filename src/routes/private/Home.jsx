@@ -8,6 +8,12 @@ import MobileNav from "./components/MobileNav";
 const Home = () => {
   const [chats, setChats] = useState([]);
   const [username, setUsername] = useState("");
+  console.log(chats);
+
+  const handleDeleteChat = (chatId) => {
+    const updatedChats = chats.filter((chat) => chat.chat_id !== chatId);
+    setChats(updatedChats);
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -80,6 +86,8 @@ const Home = () => {
                   title={chat.chat_name}
                   id={chat.chat_id}
                   usernames={chat.user_names}
+                  chats={chats}
+                  onDelete={handleDeleteChat} // Passing the delete handler
                 />
               ))}
           </div>
@@ -95,6 +103,7 @@ const Home = () => {
                   title={chat.chat_name}
                   id={chat.chat_id}
                   usernames={chat.user_names}
+                  onDelete={handleDeleteChat} // Passing the delete handler
                 />
               ))}
           </div>

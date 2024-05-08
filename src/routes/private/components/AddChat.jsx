@@ -80,7 +80,7 @@ const AddChat = ({ username }) => {
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-eucalyptus-800 text-eucalyptus-200 font-medium px-4 py-4 rounded-xl hover:bg-eucalyptus-900 transition-opacity text-2xl"
+        className="bg-eucalyptus-800 text-eucalyptus-200 font-medium px-4 py-4 rounded-xl hover:bg-eucalyptus-900 transition-opacity text-2xl "
       >
         Start New Chat
       </button>
@@ -144,7 +144,7 @@ const ChatModal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setIsOpen(false)}
-          className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-50 flex justify-center items-center overflow-y-scroll cursor-pointer"
+          className="bg-slate-900/20 backdrop-blur p-8 fixed inset-0 z-20 flex justify-center items-center overflow-y-scroll cursor-pointer"
         >
           <motion.div
             initial={{ scale: 0.95 }}

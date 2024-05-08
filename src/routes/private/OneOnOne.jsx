@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
+import ChatSettings from "./components/ChatSettings";
 
 const OneOnOne = () => {
   const [messages, setMessages] = useState([]);
@@ -27,6 +28,7 @@ const OneOnOne = () => {
   channel.subscribe();
 
   useEffect(() => {
+    <ChatSettings id={id} />;
     const fetchData = async () => {
       try {
         const selectParams = encodeURIComponent(
