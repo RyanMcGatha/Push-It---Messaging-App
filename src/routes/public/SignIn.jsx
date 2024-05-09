@@ -55,6 +55,18 @@ const Form = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -82,9 +94,13 @@ const Form = () => {
     setLoading(false);
   };
 
+  const handleFocus = (event) => {
+    event.target.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <>
-      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-[1.8]">
+      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-150">
         <motion.div
           initial="initial"
           whileInView="animate"
@@ -92,7 +108,7 @@ const Form = () => {
             staggerChildren: 0.05,
           }}
           viewport={{ once: true }}
-          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
+          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-2 font-semibold"
           style={{
             backgroundAttachment: "fixed",
             backdropFilter: "blur(15px)",
@@ -101,22 +117,22 @@ const Form = () => {
           <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
             <motion.h1
               variants={primaryVariants}
-              className=" p-2 text-center text-4xl font-semibold"
+              className="p-2 text-center text-6xl font-semibold"
             >
               Sign In
             </motion.h1>
             <motion.p
               variants={primaryVariants}
-              className="p-2 text-center text-xl font-semibold"
+              className="p-2 text-center text-3xl font-semibold"
             >
               Sign in and just Push It!
             </motion.p>
 
-            <form onSubmit={handleLogin} className="w-full">
+            <form onSubmit={handleLogin} className="w-full text-xl">
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="email-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
                   Email<span className="p-1 text-red-500">*</span>
                 </label>
@@ -129,13 +145,14 @@ const Form = () => {
                   value={email}
                   autoComplete="email"
                   onChange={(event) => setEmail(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
 
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="password-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
                   Password<span className=" pl-1 text-red-500">*</span>
                 </label>
@@ -148,13 +165,14 @@ const Form = () => {
                   value={password}
                   autoComplete="current-password"
                   onChange={(event) => setPassword(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
-              <div className="text-xs text-center flex justify-center gap-1">
+              <div className=" text-lg text-center flex justify-center gap-1 my-1 w-full">
                 Dont have an account?
                 <Link
                   to={"/signup"}
-                  className=" underline hover:text-eucalyptus-800"
+                  className="underline hover:text-eucalyptus-800 "
                 >
                   Sign Up!
                 </Link>
@@ -181,7 +199,7 @@ const Logo = () => {
     <img
       src="pushitSlogan.png"
       alt="Sully's Logo"
-      className=" w-64 mt-5 h-auto md:fixed md:left-5 md:top-5 m-3  "
+      className="w-56 h-auto md:fixed md:left-5 md:top-5 relative"
     />
   );
 };

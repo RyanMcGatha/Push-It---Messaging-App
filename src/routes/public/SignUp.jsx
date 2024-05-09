@@ -7,6 +7,18 @@ import { supabase } from "../../../supabaseConfig";
 import { Link, Navigate, redirect } from "react-router-dom";
 
 const SignUp = () => {
+  useEffect(() => {
+    const handleResize = () => {
+      const vh = window.innerHeight * 100;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const { session } = useAuth();
   return session ? (
     <Navigate to={"/home"} />
@@ -33,7 +45,7 @@ const SignUp = () => {
         "pushitt.png",
       ]}
     >
-      <section className="h-screen w-screen bg-eucalyptus-950">
+      <section className="h-screen bg-eucalyptus-950">
         <Copy />
 
         <WatermarkWrapper />
@@ -44,9 +56,8 @@ const SignUp = () => {
 
 const Copy = () => {
   return (
-    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center ">
+    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
       <Logo />
-
       <Form />
     </section>
   );
@@ -58,6 +69,10 @@ const Form = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleFocus = (event) => {
+    event.target.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -110,7 +125,7 @@ const Form = () => {
 
   return (
     <>
-      <div className="md:scale-125">
+      <div className="scale-90 md:scale-110 lg:scale-125 relative bottom-20 md:bottom-0">
         <motion.div
           initial="initial"
           whileInView="animate"
@@ -118,7 +133,7 @@ const Form = () => {
             staggerChildren: 0.05,
           }}
           viewport={{ once: true }}
-          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
+          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-2 font-semibold"
           style={{
             backgroundAttachment: "fixed",
             backdropFilter: "blur(15px)",
@@ -127,22 +142,22 @@ const Form = () => {
           <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
             <motion.h1
               variants={primaryVariants}
-              className=" p-2 text-center text-4xl font-semibold"
+              className="p-2 text-center text-6xl font-semibold"
             >
               Sign Up!
             </motion.h1>
             <motion.p
               variants={primaryVariants}
-              className="p-2 text-center text-xl font-semibold"
+              className="p-2 text-center text-3xl font-semibold"
             >
               Sign up and just Push It!
             </motion.p>
 
-            <form onSubmit={handleLogin} className="w-full">
+            <form onSubmit={handleLogin} className="w-full text-xl">
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="full-name-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
                   Full Name<span className="p-1 text-red-500">*</span>
                 </label>
@@ -150,17 +165,18 @@ const Form = () => {
                   id="full-name-input"
                   type="name"
                   placeholder="Enter your full name"
-                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
+                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400  font-semibold placeholder-eucalyptus-200"
                   required
                   value={fullName}
                   autoComplete="Full Name"
                   onChange={(event) => setFullName(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="Username-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
                   Username<span className="p-1 text-red-500">*</span>
                 </label>
@@ -173,12 +189,13 @@ const Form = () => {
                   value={username}
                   autoComplete="username"
                   onChange={(event) => setUsername(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="email-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
                   Email<span className="p-1 text-red-500">*</span>
                 </label>
@@ -191,15 +208,15 @@ const Form = () => {
                   value={email}
                   autoComplete="email"
                   onChange={(event) => setEmail(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
-
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="password-input"
-                  className="mb-1 inline-block text-sm font-medium"
+                  className="mb-1 inline-block font-extrabold"
                 >
-                  Password<span className=" pl-1 text-red-500">*</span>
+                  Password<span className="pl-1 text-red-500">*</span>
                 </label>
                 <input
                   id="password-input"
@@ -210,20 +227,20 @@ const Form = () => {
                   value={password}
                   autoComplete="current-password"
                   onChange={(event) => setPassword(event.target.value)}
+                  onFocus={handleFocus}
                 />
               </motion.div>
-              <div className="text-xs text-center flex justify-center gap-1">
+              <div className=" text-lg text-center flex justify-center gap-1 my-1 w-full">
                 Already have an account?
-                <Link to={"/"} className=" underline hover:text-eucalyptus-800">
+                <Link to={"/"} className="underline hover:text-eucalyptus-800 ">
                   Sign In!
                 </Link>
               </div>
-
               <motion.button
                 variants={primaryVariants}
                 whileTap={{ scale: 0.985 }}
                 type="submit"
-                className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
+                className="w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
               >
                 Sign Up!
               </motion.button>
@@ -240,7 +257,7 @@ const Logo = () => {
     <img
       src="pushitSlogan.png"
       alt="Sully's Logo"
-      className=" w-52 h-auto md:fixed md:left-5 md:top-5"
+      className=" w-56 md:w-56 h-auto md:fixed md:left-5 md:top-5 relative bottom-3 "
     />
   );
 };
