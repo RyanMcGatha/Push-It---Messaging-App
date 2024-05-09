@@ -18,18 +18,17 @@ const OnesCard = ({ id, title, usernames, chats, onDelete }) => {
 
 const ShimmerBorderCard = ({ id, title, usernames, chats, onDelete }) => {
   return (
-    <div className="group relative rounded-md overflow-hidden bg-eucalyptus-400 transition-all duration-500 flex items-center justify-center flex-col w-72 h-fit border-eucalyptus-400 border-4">
-      <div className="bg-eucalyptus-900 transition-colors duration-500 group-hover:bg-eucalyptus-900/50 flex flex-col items-center p-4 w-full h-full">
-        <ChatSettings id={id} chats={chats} onDelete={onDelete} />
-
-        <FiMessageCircle className=" rounded-full border-2 border-eucalyptus-400 bg-eucalyptus-950 p-4 text-7xl text-eucalyptus-200 my-2" />
-        <p className=" text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2 text-center">
-          Chat Name: <br />
-          <span className="text-eucalyptus-400 text-lg">{title}</span>
-        </p>
-        <p className=" text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2 text-center flex flex-col">
-          Chat Members:
-          <div className="flex gap-1">
+    <div className="group relative rounded-xl shadow-xl overflow-hidden bg-eucalyptus-400 transition-all duration-500 flex w-full border-eucalyptus-400 border-2">
+      <div className="bg-eucalyptus-900 transition-colors duration-500 group-hover:bg-eucalyptus-900/50 w-full  flex flex-col justify-center text-center">
+        <div className="flex items-center w-full justify-between px-2">
+          <FiMessageCircle className=" rounded-full border-2 border-eucalyptus-400 bg-eucalyptus-950 p-2 text-6xl text-eucalyptus-200" />
+          <p className=" text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2">
+            <span className="text-eucalyptus-400 text-4xl">{title}</span>
+          </p>
+          <ChatSettings id={id} chats={chats} onDelete={onDelete} />
+        </div>
+        <p className=" text-lg md:text-xl font-bold text-eucalyptus-200 capitalize mb-2 flex w-full">
+          <div className="flex justify-center gap-1 w-full ">
             {usernames.map((name, index) => (
               <span key={index} className="text-eucalyptus-400 text-lg">
                 {name}

@@ -2,11 +2,14 @@ import { Outlet } from "react-router-dom";
 import Nav from "./components/Nav";
 import SearchBar from "./components/SearchBar";
 import MobileNav from "./components/MobileNav";
+import SideNav from "./components/SideNav";
 
 const PrivateLayout = () => {
   return (
     <>
-      <div className="w-screen h-screen flex">
+      <div className="w-screen h-screen flex ">
+        <SideNav />
+
         <div className="flex flex-col w-full h-full">
           <nav className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl py-3 md:pl-5 border-b-eucalyptus-400 border-b-[1px] justify-around md:justify-start">
             <a className="md:pr-5">
