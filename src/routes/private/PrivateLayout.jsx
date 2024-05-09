@@ -6,10 +6,7 @@ import MobileNav from "./components/MobileNav";
 const PrivateLayout = () => {
   return (
     <>
-      <div className="w-screen h-screen flex border-eucalyptus-400 border-[1px] bg-eucalyptus-950 ">
-        <div className="hidden">
-          <Nav />
-        </div>
+      <div className="w-screen h-screen flex">
         <div className="flex flex-col w-full h-full">
           <nav className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl py-3 md:pl-5 border-b-eucalyptus-400 border-b-[1px] justify-around md:justify-start">
             <a className="md:pr-5">

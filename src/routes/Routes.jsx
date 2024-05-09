@@ -3,6 +3,7 @@ import { useAuth } from "../AuthContext";
 import SignIn from "./public/SignIn";
 import PrivateLayout from "./private/PrivateLayout";
 import Home from "./private/Home";
+import ErrorPage from "./public/ErrorPage";
 
 import {
   createBrowserRouter,
@@ -23,6 +24,7 @@ const Routes = () => {
     {
       path: "/",
       element: session ? <Navigate to="/home" /> : <SignIn />,
+      errorElement: <ErrorPage />,
     },
     {
       path: "/signup",
