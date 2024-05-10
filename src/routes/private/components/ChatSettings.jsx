@@ -8,6 +8,7 @@ import {
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MotionConfig } from "framer-motion";
+import OnesCard from "./OnesCard";
 
 const ChatSettings = ({ id, chats, onDelete }) => {
   const [open, setOpen] = useState(false);

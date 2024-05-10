@@ -2,92 +2,36 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { RiFolderAddLine } from "react-icons/ri";
 import ReactSelect from "react-select";
-import { headers } from "./Hooks";
+import OnesCard from "./components/OnesCard";
 
-const AddChat = ({ username }) => {
-  const [loading, setLoading] = useState(false);
-  const [usernames, setUsernames] = useState([]);
-  const [chatData, setChatData] = useState({
-    chat_name: "",
-    is_group: false,
-    chat_members: [],
-  });
+import { getUserData } from "./components/Hooks.jsx";
+import { addChat } from "./components/Hooks.jsx";
 
-  const fetchUsernames = async () => {
-    try {
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/users?",
-        { headers }
-      );
-      const data = await response.json();
-      if (response.ok) {
-        setUsernames(data.data.map((user) => user.username));
-      } else {
-        throw new Error(data.error || "Failed to fetch usernames");
-      }
-    } catch (error) {
-      alert(error.message);
-    }
+const Chats = ({ selected, setSelectedChat }) => {
+  const { chats, username, loading, error } = getUserData();
+
+  const handleDeleteChat = (chatId) => {
+    const updatedChats = chats.filter((chat) => chat.chat_id !== chatId);
+    setChats(updatedChats);
   };
 
-  useEffect(() => {
-    fetchUsernames();
-  }, []);
-
-  const handleInputChange = (name, value) => {
-    setChatData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCreateChat = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const body = JSON.stringify({
-      chat_name: chatData.chat_name,
-      is_group: chatData.is_group === "true",
-      user_names: [username, ...chatData.chat_members],
-    });
-
-    try {
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/chats/__one",
-        {
-          method: "POST",
-          headers,
-          body,
-        }
-      );
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to create chat");
-      }
-      window.location.reload();
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
-      <ChatModal
-        loading={loading}
-        handleCreateChat={handleCreateChat}
-        chatData={chatData}
-        handleInputChange={handleInputChange}
-        usernames={usernames}
-      />
-    </div>
+    <>
+      {selected === "One's" && <Ones setSelectedChat={setSelectedChat} />}
+      {selected === "Group's" && <Groups />}
+      {selected === "New Push" && <NewChat />}
+    </>
   );
 };
 
-const ChatModal = ({
-  loading,
-  handleCreateChat,
-  chatData,
-  handleInputChange,
-  usernames,
-}) => {
+export default Chats;
+
+const NewChat = () => {
+  const { loading, handleCreateChat, chatData, handleInputChange, usernames } =
+    addChat();
   const options = usernames.map((username) => ({
     value: username,
     label: username,
@@ -96,22 +40,8 @@ const ChatModal = ({
     value: member,
     label: member,
   }));
-  const optionsTwo = usernames.map((username) => ({
-    value: username,
-    label: username,
-  }));
-  const selectedOptionsTwo = chatData.chat_members.map((member) => ({
-    value: member,
-    label: member,
-  }));
 
   const onMembersChange = (selectedOptions) => {
-    const members = selectedOptions
-      ? selectedOptions.map((option) => option.value)
-      : [];
-    handleInputChange("chat_members", members);
-  };
-  const onMembersChangeTwo = (selectedOptionsTwo) => {
     const members = selectedOptions
       ? selectedOptions.map((option) => option.value)
       : [];
@@ -232,4 +162,51 @@ const ChatModal = ({
   );
 };
 
-export default AddChat;
+const Groups = () => {
+  const { chats, handleDeleteChat } = getUserData();
+
+  return (
+    <>
+      <h1 className="text-center md:text-left text-eucalyptus-200 text-2xl sm:text-3xl md:text-4xl lg:text-6xl pt-3 sm:pt-4 md:pt-5">
+        Groups
+      </h1>
+      <div className="flex items-center justify-center md:justify-start w-full gap-5 md:gap-8 flex-wrap">
+        {chats
+          .filter((chat) => chat.is_group)
+          .map((chat) => (
+            <OnesCard
+              key={chat.chat_id}
+              title={chat.chat_name}
+              id={chat.chat_id}
+              usernames={chat.user_names}
+              onDelete={handleDeleteChat}
+            />
+          ))}
+      </div>
+    </>
+  );
+};
+
+const Ones = ({ setSelectedChat }) => {
+  const { chats, handleDeleteChat } = getUserData();
+
+  return (
+    <>
+      <div className="flex items-center justify-center md:justify-start w-full gap-2 flex-wrap">
+        {chats
+          .filter((chat) => !chat.is_group)
+          .map((chat) => (
+            <OnesCard
+              key={chat.chat_id}
+              title={chat.chat_name}
+              id={chat.chat_id}
+              usernames={chat.user_names}
+              chats={chats}
+              onDelete={handleDeleteChat}
+              setSelectedChat={setSelectedChat}
+            />
+          ))}
+      </div>
+    </>
+  );
+};

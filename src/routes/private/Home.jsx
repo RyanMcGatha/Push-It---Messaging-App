@@ -3,69 +3,16 @@ import React, { useState, useEffect } from "react";
 import OnesCard from "./components/OnesCard";
 import AddChat from "./components/AddChat";
 import { supabase } from "../../../supabaseConfig";
+import { apiKey } from "../../../supabaseConfig";
 import MobileNav from "./components/MobileNav";
 import { motion } from "framer-motion";
-
-const tabs = ["One's", "Group's", "New Push"];
+import Chats from "./Chats";
+import OneOnOne from "./OneOnOne";
+import Messages from "./Messages";
 
 const Home = () => {
-  const [chats, setChats] = useState([]);
-  const [username, setUsername] = useState("");
   const [selected, setSelected] = useState(tabs[0]);
-
-  const handleDeleteChat = (chatId) => {
-    const updatedChats = chats.filter((chat) => chat.chat_id !== chatId);
-    setChats(updatedChats);
-  };
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        console.error("Error getting user:", error.message);
-        return;
-      }
-      setUsername(data.user.user_metadata.username);
-    };
-
-    getUser();
-  }, []);
-
-  useEffect(() => {
-    if (username) {
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            "https://us-east-2.aws.neurelo.com/rest/chats",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY":
-                  "neurelo_9wKFBp874Z5xFw6ZCfvhXVDJ+LiTxRH5g8EIPHIltF4eJyUkIkPuZa28E/j27n4p7g78sodDoNFVybTx3GuBXAQY2QFUoXUQQff3EYC8Yp9b0HY1CmFBYQQQYKrKXWHzocwrP/W6PeIG+R8mwaPKJ/Q0YH42gsX2Pm2oNj1LpgHkX6CinOF6GPzXyftO88Hm_6WDq3T3BsqUg5xLhWKkSs5N9zZ4PXT+Y+THHalGqfb8=",
-              },
-            }
-          );
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const { data } = await response.json();
-
-          const relevantChats = data.filter((chat) =>
-            chat.user_names.includes(username)
-          );
-          setChats(relevantChats);
-        } catch (error) {
-          console.error(
-            "There was a problem with your fetch operation:",
-            error
-          );
-        }
-      };
-
-      fetchData();
-    }
-  }, [username]);
+  const [selectedChat, setSelectedChat] = useState(0);
 
   return (
     <>
@@ -85,41 +32,9 @@ const Home = () => {
                 />
               ))}
 
-              {/* <a>
-                <AddChat username={username} />
-              </a> */}
+              <a></a>
             </div>
-
-            <div className="flex items-center justify-center md:justify-start w-full gap-2 flex-wrap">
-              {chats
-                .filter((chat) => !chat.is_group)
-                .map((chat) => (
-                  <OnesCard
-                    key={chat.chat_id}
-                    title={chat.chat_name}
-                    id={chat.chat_id}
-                    usernames={chat.user_names}
-                    chats={chats}
-                    onDelete={handleDeleteChat}
-                  />
-                ))}
-            </div>
-            <h1 className="text-center md:text-left text-eucalyptus-200 text-2xl sm:text-3xl md:text-4xl lg:text-6xl pt-3 sm:pt-4 md:pt-5">
-              Groups
-            </h1>
-            <div className="flex items-center justify-center md:justify-start w-full gap-5 md:gap-8 flex-wrap">
-              {chats
-                .filter((chat) => chat.is_group)
-                .map((chat) => (
-                  <OnesCard
-                    key={chat.chat_id}
-                    title={chat.chat_name}
-                    id={chat.chat_id}
-                    usernames={chat.user_names}
-                    onDelete={handleDeleteChat}
-                  />
-                ))}
-            </div>
+            <Chats selected={selected} setSelectedChat={setSelectedChat} />
           </div>
         </div>
         <div
@@ -129,9 +44,10 @@ const Home = () => {
             backgroundImage: "url(bg.png)",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            rotate: "180deg",
           }}
-        ></div>
+        >
+          <Messages selectedChat={selectedChat} />
+        </div>
       </div>
     </>
   );
@@ -139,6 +55,7 @@ const Home = () => {
 
 export default Home;
 
+const tabs = ["One's", "Group's", "New Push"];
 const Chip = ({ text, selected, setSelected }) => {
   return (
     <button
