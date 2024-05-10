@@ -7,7 +7,10 @@ const SideNav = () => {
   const [selected, setSelected] = useState(0);
 
   return (
-    <nav className="h-full w-fit bg-slate-950 p-4 flex flex-col items-center gap-2">
+    <nav
+      className="h-full w-fit p-4 flex flex-col items-center gap-2"
+      style={{ background: "rgb(22 24 28)" }}
+    >
       <svg
         width="40"
         height="28"
