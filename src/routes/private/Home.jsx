@@ -18,7 +18,7 @@ const Home = () => {
     <>
       <div className="w-full h-full flex">
         <div
-          className="bg-eucalyptus-950 flex flex-col overflow-y-scroll h-screen no-scrollbar"
+          className="bg-eucalyptus-950 flex flex-col overflow-y-scroll h-full no-scrollbar"
           style={{ width: "30%" }}
         >
           <div className="flex flex-col items-center md:items-start w-full">
@@ -38,12 +38,10 @@ const Home = () => {
           </div>
         </div>
         <div
-          className=" h-full"
+          className=""
           style={{
             width: "70%",
             backgroundImage: "url(bg.png)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
           }}
         >
           <Messages selectedChat={selectedChat} />

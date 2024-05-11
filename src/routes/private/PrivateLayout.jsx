@@ -11,7 +11,10 @@ const PrivateLayout = () => {
         <SideNav />
 
         <div className="flex flex-col w-full h-full">
-          <nav className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl py-3 md:pl-5 border-b-eucalyptus-400 border-b-[1px] justify-around md:justify-start">
+          <nav
+            className=" text-white bg-eucalyptus-900 flex items-center w-full shadow-xl py-3 md:pl-5 border-b-eucalyptus-400 border-b-[1px] justify-around md:justify-start"
+            style={{ height: "10%" }}
+          >
             <a className="md:pr-5">
               <MobileNav />
             </a>
@@ -26,8 +29,9 @@ const PrivateLayout = () => {
               />
             </div>
           </nav>
-
-          <Outlet />
+          <div className="w-full" style={{ height: "90%" }}>
+            <Outlet />
+          </div>
         </div>
       </div>
     </>

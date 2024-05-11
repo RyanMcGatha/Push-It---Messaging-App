@@ -12,6 +12,7 @@ export const getUserData = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [full_name, setFull_name] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -20,6 +21,7 @@ export const getUserData = () => {
         const { data, error } = await supabase.auth.getUser();
         if (error) throw error;
         setUsername(data.user.user_metadata.username);
+        setFull_name(data.user.user_metadata.full_name);
       } catch (error) {
         setError(error);
         console.error("Error fetching signed in user:", error.message);
@@ -51,9 +53,9 @@ export const getUserData = () => {
     };
 
     fetchData();
-  }, [username]);
+  }, [username, full_name]);
 
-  return { chats, username, loading, error };
+  return { chats, username, loading, error, full_name };
 };
 
 export const addChat = () => {
@@ -127,5 +129,7 @@ export const addChat = () => {
     chatData,
     handleInputChange,
     usernames,
+
+    username,
   };
 };
