@@ -14,6 +14,7 @@ export const getUserData = () => {
   const [error, setError] = useState(null);
   const [full_name, setFull_name] = useState("");
   const [id, setId] = useState(null);
+  const [userData, setUserData] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -56,7 +57,32 @@ export const getUserData = () => {
     fetchData();
   }, [username, full_name]);
 
-  return { chats, username, loading, error, full_name };
+  useEffect(() => {
+    const fetchUser = async () => {
+      const filterParams = encodeURIComponent(
+        JSON.stringify({
+          username,
+        })
+      );
+
+      const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
+
+      try {
+        const response = await fetch(url, { method: "GET", headers });
+        if (!response.ok) throw new Error("Failed to fetch user profile");
+
+        const result = await response.json();
+        setUserData(result.data);
+      } catch (error) {
+        console.error("Fetch user error:", error.message);
+      }
+    };
+    if (username) {
+      fetchUser();
+    }
+  }, [username]);
+
+  return { chats, username, loading, error, full_name, userData };
 };
 
 export const addChat = () => {

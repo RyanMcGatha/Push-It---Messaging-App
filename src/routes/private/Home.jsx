@@ -8,7 +8,6 @@ const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedChat, setSelectedChat] = useState(0);
   const [selectedChatData, setSelectedChatData] = useState({});
-  console.log(selectedChatData);
 
   return (
     <>

@@ -3,6 +3,7 @@ import { supabase } from "../../../supabaseConfig";
 import ChatSettings from "./components/ChatSettings";
 import { getUserData, addChat, headers } from "./components/Hooks";
 import { RiChat1Fill } from "react-icons/ri";
+import { CgProfile } from "react-icons/cg";
 
 const Messages = ({ selectedChat }) => {
   const [messages, setMessages] = useState([]);
@@ -117,7 +118,7 @@ const Messages = ({ selectedChat }) => {
               } p-2 rounded-lg w-[fit-content] flex flex-col`}
             >
               <div className="bg-transparent flex items-center gap-1 text-eucalyptus-200">
-                <RiChat1Fill className="text-2xl text-eucalyptus-800" />
+                <CgProfile className="text-2xl text-eucalyptus-800" />
                 <p className="text-xs text-right">
                   {msg.user_name} -{" "}
                   {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -131,7 +132,7 @@ const Messages = ({ selectedChat }) => {
                   className={`${
                     msg.user_name === username
                       ? "bg-eucalyptus-400"
-                      : "bg-eucalyptus-300"
+                      : " bg-neutral-900"
                   } flex w-fit relative p-2 left-5 rounded-tr-lg rounded-br-lg rounded-bl-lg rounded-tl-none`}
                 >
                   <p className="text-lg">{msg.message_text}</p>

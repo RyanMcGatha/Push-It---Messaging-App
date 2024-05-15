@@ -13,7 +13,7 @@ const SideNav = () => {
 
   return (
     <nav
-      className="h-full w-fit p-4 flex flex-col items-center gap-2 border-r-black border-r-"
+      className="h-full w-fit p-4 flex flex-col items-center gap-2 border-r-black border-r-4"
       style={{ background: "rgb(22 24 28)" }}
     >
       <NavLink to={`/${username}`}>
