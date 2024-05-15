@@ -4,6 +4,7 @@ import SignIn from "./public/SignIn";
 import PrivateLayout from "./private/PrivateLayout";
 import Home from "./private/Home";
 import ErrorPage from "./public/ErrorPage";
+import Profile from "./private/Profile";
 
 import {
   createBrowserRouter,
@@ -35,8 +36,7 @@ const Routes = () => {
       element: session ? <PrivateLayout /> : <Navigate to="/" />,
       children: [
         { path: "/home", element: <Home /> },
-        { path: "/ones", element: <OneOnOne /> },
-        { path: "/groups", element: <Groups /> },
+        { path: "/:username", element: <Profile /> },
         { path: "/ones/:id/:usernames", element: <OneOnOne /> },
       ],
     },

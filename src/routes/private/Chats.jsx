@@ -6,8 +6,14 @@ import OnesCard from "./components/OnesCard";
 
 import { getUserData } from "./components/Hooks.jsx";
 import { addChat } from "./components/Hooks.jsx";
+import ChatCard from "./components/ChatCard.jsx";
 
-const Chats = ({ selected, setSelectedChat }) => {
+const Chats = ({
+  selected,
+  setSelectedChat,
+  selectedChatData,
+  setSelectedChatData,
+}) => {
   const { chats, username, loading, error } = getUserData();
 
   const handleDeleteChat = (chatId) => {
@@ -20,7 +26,12 @@ const Chats = ({ selected, setSelectedChat }) => {
 
   return (
     <>
-      {selected === "One's" && <Ones setSelectedChat={setSelectedChat} />}
+      {selected === "One's" && (
+        <Ones
+          setSelectedChat={setSelectedChat}
+          setSelectedChatData={setSelectedChatData}
+        />
+      )}
       {selected === "Group's" && <Groups />}
       {selected === "New Push" && <NewChat />}
     </>
@@ -187,7 +198,7 @@ const Groups = () => {
   );
 };
 
-const Ones = ({ setSelectedChat }) => {
+const Ones = ({ setSelectedChat, setSelectedChatData }) => {
   const { chats, handleDeleteChat } = getUserData();
 
   return (
@@ -196,7 +207,7 @@ const Ones = ({ setSelectedChat }) => {
         {chats
           .filter((chat) => !chat.is_group)
           .map((chat) => (
-            <OnesCard
+            <ChatCard
               key={chat.chat_id}
               title={chat.chat_name}
               id={chat.chat_id}
@@ -204,6 +215,7 @@ const Ones = ({ setSelectedChat }) => {
               chats={chats}
               onDelete={handleDeleteChat}
               setSelectedChat={setSelectedChat}
+              setSelectedChatData={setSelectedChatData}
             />
           ))}
       </div>

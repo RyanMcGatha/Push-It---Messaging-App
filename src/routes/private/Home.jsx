@@ -1,28 +1,24 @@
-import SearchBar from "./components/SearchBar";
 import React, { useState, useEffect } from "react";
-import OnesCard from "./components/OnesCard";
-import AddChat from "./components/AddChat";
-import { supabase } from "../../../supabaseConfig";
-import { apiKey } from "../../../supabaseConfig";
-import MobileNav from "./components/MobileNav";
 import { motion } from "framer-motion";
 import Chats from "./Chats";
-import OneOnOne from "./OneOnOne";
+
 import Messages from "./Messages";
 
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedChat, setSelectedChat] = useState(0);
+  const [selectedChatData, setSelectedChatData] = useState({});
+  console.log(selectedChatData);
 
   return (
     <>
       <div className="w-full h-full flex">
         <div
-          className="bg-eucalyptus-950 flex flex-col overflow-y-scroll h-full no-scrollbar"
+          className=" bg-[#16181c] flex flex-col overflow-y-scroll h-full no-scrollbar"
           style={{ width: "30%" }}
         >
-          <div className="flex flex-col items-center md:items-start w-full">
-            <div className="flex justify-start w-full p-4 ">
+          <div className="flex flex-col items-center w-full p-5">
+            <div className="flex w-fit p-5 bg-[#080809] rounded-full justify-center">
               {tabs.map((tab) => (
                 <Chip
                   text={tab}
@@ -34,14 +30,19 @@ const Home = () => {
 
               <a></a>
             </div>
-            <Chats selected={selected} setSelectedChat={setSelectedChat} />
+            <Chats
+              selected={selected}
+              setSelectedChat={setSelectedChat}
+              selectedChatData={selectedChatData}
+              setSelectedChatData={setSelectedChatData}
+            />
           </div>
         </div>
         <div
           className=""
           style={{
             width: "70%",
-            backgroundImage: "url(bg.png)",
+            backgroundColor: "black",
           }}
         >
           <Messages selectedChat={selectedChat} />
@@ -62,7 +63,7 @@ const Chip = ({ text, selected, setSelected }) => {
         selected
           ? "text-white"
           : "text-slate-300 hover:text-slate-200 hover:bg-slate-700"
-      } text-sm transition-colors px-2.5 py-0.5 rounded-md relative`}
+      } text-sm transition-colors px-2.5 py-0.5 rounded-md relative `}
     >
       <span className="relative z-10">{text}</span>
       {selected && (

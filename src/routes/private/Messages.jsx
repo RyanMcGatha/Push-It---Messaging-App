@@ -9,6 +9,7 @@ const Messages = ({ selectedChat }) => {
   const [message, setMessage] = useState("");
   const { username } = addChat();
   const { full_name } = getUserData();
+  const containerRef = useRef(null);
 
   const channel = supabase
     .channel(`room.${selectedChat}`)
@@ -16,8 +17,7 @@ const Messages = ({ selectedChat }) => {
       "postgres_changes",
       { event: "INSERT", schema: "public" },
       (payload) => {
-        console.log(payload);
-        setMessages([...messages, payload.new]);
+        setMessages((prevMessages) => [...prevMessages, payload.new]);
       }
     );
   channel.subscribe();
@@ -54,36 +54,46 @@ const Messages = ({ selectedChat }) => {
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
-    if (message.trim()) {
-      try {
-        const body = JSON.stringify({
-          chat_id: Number(selectedChat),
-          message_text: message,
-          user_name: username,
-          full_name: full_name,
-        });
 
-        const response = await fetch(
-          "https://us-east-2.aws.neurelo.com/rest/messages/__one",
-          {
-            method: "POST",
-            headers,
-            body,
-          }
-        );
+    try {
+      const body = JSON.stringify({
+        chat_id: Number(selectedChat),
+        message_text: message,
+        user_name: username,
+        full_name: full_name,
+      });
 
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || "Failed to send message");
+      const response = await fetch(
+        "https://us-east-2.aws.neurelo.com/rest/messages/__one",
+        {
+          method: "POST",
+          headers: headers,
+          body: body,
         }
-        setMessage("");
-      } catch (error) {
-        console.error("There was a problem with your fetch operation:", error);
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message");
       }
+      setMessage("");
+    } catch (error) {
+      console.error("There was a problem with your fetch operation:", error);
+    }
+    try {
+      const { error } = await supabase.from("messages").insert({
+        chat_id: Number(selectedChat),
+        message_text: message,
+        user_name: username,
+      });
+      if (error) {
+        console.error("Error inserting message:", error.message);
+        return;
+      }
+    } catch (error) {
+      console.error("There was a problem with your fetch operation:", error);
     }
   };
-
-  const containerRef = useRef(null);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -101,7 +111,7 @@ const Messages = ({ selectedChat }) => {
         >
           {messages.map((msg) => (
             <div
-              key={msg.id}
+              key={msg.id} // Ensure that msg.id is unique for each message
               className={`${
                 msg.user_name === username ? "self-end" : "self-start"
               } p-2 rounded-lg w-[fit-content] flex flex-col`}

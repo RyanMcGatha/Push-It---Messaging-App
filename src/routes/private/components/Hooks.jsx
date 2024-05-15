@@ -13,6 +13,7 @@ export const getUserData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [full_name, setFull_name] = useState("");
+  const [id, setId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
