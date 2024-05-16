@@ -1,16 +1,18 @@
+// src/Messages.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../supabaseConfig";
 import ChatSettings from "./components/ChatSettings";
 import { getUserData, addChat, headers } from "./components/Hooks";
-import { RiChat1Fill } from "react-icons/ri";
-import { CgProfile } from "react-icons/cg";
+import { useTheme } from "../../ThemeContext"; // Import the useTheme hook
 
-const Messages = ({ selectedChat }) => {
+const Messages = ({ selectedChat, userData }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const { username } = addChat();
   const { full_name } = getUserData();
   const containerRef = useRef(null);
+
+  const { theme, toggleTheme } = useTheme(); // Use the theme context
 
   const channel = supabase
     .channel(`room.${selectedChat}`)
@@ -104,22 +106,73 @@ const Messages = ({ selectedChat }) => {
 
   return (
     <>
-      <div className="flex flex-col h-full justify-between overflow-hidden pb-2">
+      <div
+        className={`flex flex-col h-full w-full ${
+          theme === "light" ? "bg-white" : "bg-dark text-white"
+        }`}
+      >
+        {/* Header */}
+        <div
+          className={`flex items-center justify-between p-4 border-b ${
+            theme === "light" ? "border-gray-300" : "border-dark-lighter"
+          }`}
+        >
+          <h2 className="text-xl font-semibold">Messages</h2>
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="Search"
+              className={`p-2 border ${
+                theme === "light"
+                  ? "border-gray-300 bg-white"
+                  : "border-dark-lighter bg-dark-lighter"
+              } rounded-lg`}
+            />
+            <button
+              className={`p-2 ${
+                theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
+              } rounded-lg`}
+            >
+              Search
+            </button>
+            <button
+              onClick={toggleTheme}
+              className={`p-2 ${
+                theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
+              } rounded-lg`}
+            >
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </button>
+          </div>
+        </div>
+
+        {/* Messages */}
         <div
           ref={containerRef}
-          className="flex flex-col overflow-y-scroll no-scrollbar w-full px-5"
-          style={{ height: "93%" }}
+          className="flex flex-col overflow-y-scroll no-scrollbar w-full p-5"
+          style={{ height: "80%" }}
         >
           {messages.map((msg) => (
             <div
               key={msg.id} // Ensure that msg.id is unique for each message
               className={`${
                 msg.user_name === username ? "self-end" : "self-start"
-              } p-2 rounded-lg w-[fit-content] flex flex-col`}
+              } p-2 mb-4 rounded-lg w-fit flex flex-col`}
             >
-              <div className="bg-transparent flex items-center gap-1 text-eucalyptus-200">
-                <CgProfile className="text-2xl text-eucalyptus-800" />
-                <p className="text-xs text-right">
+              <div className="flex items-center gap-2">
+                <img
+                  src={
+                    userData.find((user) => user.username === msg.user_name)
+                      ?.profile_pic ||
+                    `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`
+                  }
+                  className="w-10 h-10 rounded-full border border-gray-300"
+                />
+                <p
+                  className={`text-sm ${
+                    theme === "light" ? "text-gray-500" : "text-gray-400"
+                  }`}
+                >
                   {msg.user_name} -{" "}
                   {new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -131,9 +184,11 @@ const Messages = ({ selectedChat }) => {
                 <span
                   className={`${
                     msg.user_name === username
-                      ? "bg-eucalyptus-400"
-                      : " bg-neutral-900"
-                  } flex w-fit relative p-2 left-5 rounded-tr-lg rounded-br-lg rounded-bl-lg rounded-tl-none`}
+                      ? "bg-blue-500 text-white"
+                      : theme === "light"
+                      ? "bg-gray-200 text-black"
+                      : "bg-dark-lighter text-white"
+                  } flex w-fit p-2 mt-1 rounded-lg`}
                 >
                   <p className="text-lg">{msg.message_text}</p>
                 </span>
@@ -142,20 +197,30 @@ const Messages = ({ selectedChat }) => {
           ))}
         </div>
 
+        {/* Message Input */}
         <form
           onSubmit={handleSendMessage}
-          className="flex justify-between border-t-[1px] border-eucalyptus-400"
-          style={{ height: "7%" }}
+          className={`flex items-center p-4 border-t ${
+            theme === "light" ? "border-gray-300" : "border-dark-lighter"
+          }`}
         >
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full p-2 border-eucalyptus-400 border-[1px] rounded-lg"
+            className={`flex-grow p-2 border ${
+              theme === "light"
+                ? "border-gray-300 bg-white"
+                : "border-dark-lighter bg-dark-lighter"
+            } rounded-lg`}
           />
           <button
             type="submit"
-            className="bg-eucalyptus-400 text-white p-2 rounded-lg"
+            className={`ml-2 p-2 ${
+              theme === "light"
+                ? "bg-blue-500 text-white"
+                : "bg-blue-700 text-white"
+            } rounded-lg`}
           >
             Send
           </button>

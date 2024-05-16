@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { RiFolderAddLine } from "react-icons/ri";
 import ReactSelect from "react-select";
 import OnesCard from "./components/OnesCard";
-
 import { getUserData } from "./components/Hooks.jsx";
 import { addChat } from "./components/Hooks.jsx";
 import ChatCard from "./components/ChatCard.jsx";
@@ -15,7 +14,7 @@ const Chats = ({
   setSelectedChatData,
   userData,
 }) => {
-  const { chats, username, loading, error } = getUserData();
+  const { chats, loading, error } = getUserData();
 
   const handleDeleteChat = (chatId) => {
     const updatedChats = chats.filter((chat) => chat.chat_id !== chatId);
@@ -27,15 +26,15 @@ const Chats = ({
 
   return (
     <>
-      {selected === "One's" && (
+      {selected === "All Chats" && (
         <Ones
           setSelectedChat={setSelectedChat}
           setSelectedChatData={setSelectedChatData}
           userData={userData}
         />
       )}
-      {selected === "Group's" && <Groups />}
-      {selected === "New Push" && <NewChat />}
+      {selected === "Groups" && <Groups />}
+      {selected === "Contacts" && <Contacts />}
     </>
   );
 };
@@ -200,12 +199,16 @@ const Groups = () => {
   );
 };
 
+const Contacts = () => {
+  // Implement the Contacts tab similar to Ones and Groups
+};
+
 const Ones = ({ setSelectedChat, setSelectedChatData, userData }) => {
   const { chats, handleDeleteChat } = getUserData();
 
   return (
     <>
-      <div className="flex items-center justify-center md:justify-start w-full gap-2 flex-wrap">
+      <div className="flex flex-col w-full">
         {chats
           .filter((chat) => !chat.is_group)
           .map((chat) => (

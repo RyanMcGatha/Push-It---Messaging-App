@@ -1,23 +1,37 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { HiHome, HiSearch, HiStar, HiTrash } from "react-icons/hi";
-import { ImProfile } from "react-icons/im";
 import { IoSettings } from "react-icons/io5";
-import { Link, NavLink } from "react-router-dom";
-import { getUserData } from "./Hooks";
 import { CgProfile } from "react-icons/cg";
+import { NavLink } from "react-router-dom";
+import { getUserData, useUser } from "./Hooks";
+import { useTheme } from "../../../ThemeContext";
+import { supabase } from "../../../../supabaseConfig";
+import { FaSignOutAlt } from "react-icons/fa";
 
 const SideNav = () => {
   const [selected, setSelected] = useState(0);
   const { username } = getUserData();
 
+  const { userData } = useUser();
+
+  const { theme } = useTheme(); // Use the theme context
+
   return (
     <nav
-      className="h-full w-fit p-4 flex flex-col items-center gap-2 border-r-black border-r-4"
-      style={{ background: "rgb(22 24 28)" }}
+      className={`h-full w-fit p-4 flex flex-col items-center gap-2 border-r-4 ${
+        theme === "light"
+          ? "border-r-black bg-gray-100"
+          : "border-r-white bg-dark"
+      }`}
     >
       <NavLink to={`/${username}`}>
-        <CgProfile className="text-5xl" />
+        <img
+          src={userData.find((user) => user.username === username)?.profile_pic}
+          className={`w-10 h-10 rounded-full border-2 ${
+            theme === "light" ? "border-gray-300" : "border-dark-lighter"
+          } mr-2`}
+        />
       </NavLink>
       <NavItem selected={selected === 0} id={0} setSelected={setSelected}>
         <HiHome
@@ -36,16 +50,26 @@ const SideNav = () => {
         <HiTrash />
       </NavItem>
       <NavItem selected={selected === 4} id={4} setSelected={setSelected}>
-        <IoSettings />
+        <FaSignOutAlt
+          onClick={() => {
+            supabase.auth.signOut();
+          }}
+        />
       </NavItem>
     </nav>
   );
 };
 
 const NavItem = ({ children, selected, id, setSelected }) => {
+  const { theme } = useTheme(); // Use the theme context
+
   return (
     <motion.button
-      className="p-3 text-xl bg-slate-800 hover:bg-slate-700 rounded-md transition-colors relative"
+      className={`p-3 text-xl rounded-md transition-colors relative ${
+        theme === "light"
+          ? "bg-slate-800 hover:bg-slate-700 text-white"
+          : "bg-gray-600 hover:bg-gray-500 text-black"
+      }`}
       onClick={() => setSelected(id)}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}

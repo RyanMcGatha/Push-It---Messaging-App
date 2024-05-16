@@ -15,7 +15,7 @@
 #root,
 body,
 html {
-  background: #0c5b35;
+  background: gray;
   overflow: hidden;
   max-height: 100vh;
 }
