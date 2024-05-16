@@ -62,7 +62,7 @@ const Home = () => {
 
 export default Home;
 
-const tabs = ["All Chats", "Groups", "Contacts"];
+const tabs = ["Ones", "Groups", "Add Chat"];
 const Chip = ({ text, selected, setSelected }) => {
   const { theme } = useTheme(); // Use the theme context
 

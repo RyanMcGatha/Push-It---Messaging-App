@@ -28,9 +28,10 @@ const SideNav = () => {
       <NavLink to={`/${username}`}>
         <img
           src={userData.find((user) => user.username === username)?.profile_pic}
+          alt={`${username}'s profile`}
           className={`w-10 h-10 rounded-full border-2 ${
             theme === "light" ? "border-gray-300" : "border-dark-lighter"
-          } mr-2`}
+          }`}
         />
       </NavLink>
       <NavItem selected={selected === 0} id={0} setSelected={setSelected}>
@@ -40,16 +41,16 @@ const SideNav = () => {
           }}
         />
       </NavItem>
-      <NavItem selected={selected === 1} id={1} setSelected={setSelected}>
+      {/* <NavItem selected={selected === 1} id={1} setSelected={setSelected}>
         <HiSearch />
-      </NavItem>
-      <NavItem selected={selected === 2} id={2} setSelected={setSelected}>
+      </NavItem> */}
+      {/* <NavItem selected={selected === 2} id={2} setSelected={setSelected}>
         <HiStar />
       </NavItem>
       <NavItem selected={selected === 3} id={3} setSelected={setSelected}>
         <HiTrash />
-      </NavItem>
-      <NavItem selected={selected === 4} id={4} setSelected={setSelected}>
+      </NavItem> */}
+      <NavItem selected={selected === 1} id={1} setSelected={setSelected}>
         <FaSignOutAlt
           onClick={() => {
             supabase.auth.signOut();
@@ -67,8 +68,8 @@ const NavItem = ({ children, selected, id, setSelected }) => {
     <motion.button
       className={`p-3 text-xl rounded-md transition-colors relative ${
         theme === "light"
-          ? "bg-slate-800 hover:bg-slate-700 text-white"
-          : "bg-gray-600 hover:bg-gray-500 text-black"
+          ? "bg-gray-200 hover:bg-gray-300 text-black"
+          : "bg-gray-700 hover:bg-gray-600 text-white"
       }`}
       onClick={() => setSelected(id)}
       whileHover={{ scale: 1.05 }}

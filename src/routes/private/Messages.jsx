@@ -1,4 +1,3 @@
-// src/Messages.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../supabaseConfig";
 import ChatSettings from "./components/ChatSettings";
@@ -14,16 +13,23 @@ const Messages = ({ selectedChat, userData }) => {
 
   const { theme, toggleTheme } = useTheme(); // Use the theme context
 
-  const channel = supabase
-    .channel(`room.${selectedChat}`)
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public" },
-      (payload) => {
-        setMessages((prevMessages) => [...prevMessages, payload.new]);
-      }
-    );
-  channel.subscribe();
+  useEffect(() => {
+    const channel = supabase
+      .channel(`room.${selectedChat}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public" },
+        (payload) => {
+          setMessages((prevMessages) => [...prevMessages, payload.new]);
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [selectedChat]);
 
   useEffect(() => {
     const fetchMessages = async () => {
