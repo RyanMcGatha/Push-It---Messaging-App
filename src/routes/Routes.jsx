@@ -4,7 +4,7 @@ import SignIn from "./public/SignIn";
 import PrivateLayout from "./private/PrivateLayout";
 import Home from "./private/Home";
 import ErrorPage from "./public/ErrorPage";
-import Profile from "./private/Profile";
+import { Profile } from "./private/Profile";
 
 import {
   createBrowserRouter,

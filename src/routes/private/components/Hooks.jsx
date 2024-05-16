@@ -57,6 +57,14 @@ export const getUserData = () => {
     fetchData();
   }, [username, full_name]);
 
+  return { chats, username, loading, error, full_name };
+};
+
+export const useUser = () => {
+  const { username } = getUserData();
+  const [userData, setUserData] = useState([]);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchUser = async () => {
       const filterParams = encodeURIComponent(
@@ -70,19 +78,17 @@ export const getUserData = () => {
       try {
         const response = await fetch(url, { method: "GET", headers });
         if (!response.ok) throw new Error("Failed to fetch user profile");
-
-        const result = await response.json();
-        setUserData(result.data);
+        const data = await response.json();
+        setUserData(data.data);
       } catch (error) {
-        console.error("Fetch user error:", error.message);
+        setError(error);
+        console.error("Failed to fetch user:", error);
       }
     };
-    if (username) {
-      fetchUser();
-    }
+    fetchUser();
   }, [username]);
 
-  return { chats, username, loading, error, full_name, userData };
+  return { userData, error };
 };
 
 export const addChat = () => {

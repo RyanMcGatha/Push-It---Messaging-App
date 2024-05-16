@@ -13,6 +13,7 @@ const Chats = ({
   setSelectedChat,
   selectedChatData,
   setSelectedChatData,
+  userData,
 }) => {
   const { chats, username, loading, error } = getUserData();
 
@@ -30,6 +31,7 @@ const Chats = ({
         <Ones
           setSelectedChat={setSelectedChat}
           setSelectedChatData={setSelectedChatData}
+          userData={userData}
         />
       )}
       {selected === "Group's" && <Groups />}
@@ -198,7 +200,7 @@ const Groups = () => {
   );
 };
 
-const Ones = ({ setSelectedChat, setSelectedChatData }) => {
+const Ones = ({ setSelectedChat, setSelectedChatData, userData }) => {
   const { chats, handleDeleteChat } = getUserData();
 
   return (
@@ -216,6 +218,7 @@ const Ones = ({ setSelectedChat, setSelectedChatData }) => {
               onDelete={handleDeleteChat}
               setSelectedChat={setSelectedChat}
               setSelectedChatData={setSelectedChatData}
+              userData={userData}
             />
           ))}
       </div>

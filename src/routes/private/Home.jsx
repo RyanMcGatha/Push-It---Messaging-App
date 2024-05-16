@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Chats from "./Chats";
+import { useUser } from "./components/Hooks";
 
 import Messages from "./Messages";
 
@@ -8,6 +9,7 @@ const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedChat, setSelectedChat] = useState(0);
   const [selectedChatData, setSelectedChatData] = useState({});
+  const { userData } = useUser();
 
   return (
     <>
@@ -34,6 +36,7 @@ const Home = () => {
               setSelectedChat={setSelectedChat}
               selectedChatData={selectedChatData}
               setSelectedChatData={setSelectedChatData}
+              userData={userData}
             />
           </div>
         </div>

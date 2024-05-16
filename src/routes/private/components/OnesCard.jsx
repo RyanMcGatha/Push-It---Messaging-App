@@ -11,6 +11,7 @@ const OnesCard = ({
   onDelete,
   setSelectedChat,
   setSelectedChatData,
+  userData,
 }) => {
   return (
     <GlassEffectCard
@@ -22,6 +23,7 @@ const OnesCard = ({
       onDelete={onDelete}
       setSelectedChat={setSelectedChat}
       setSelectedChatData={setSelectedChatData}
+      userData={userData}
     />
   );
 };
@@ -34,6 +36,7 @@ const GlassEffectCard = ({
   onDelete,
   setSelectedChat,
   setSelectedChatData,
+  userData,
 }) => {
   const [open, setOpen] = useState(false);
 

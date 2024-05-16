@@ -10,8 +10,10 @@ const ChatCard = ({
   onDelete,
   setSelectedChat,
   setSelectedChatData,
+  userData,
 }) => {
   const [open, setOpen] = useState(false);
+  console.log(userData);
 
   return (
     <>
@@ -22,9 +24,17 @@ const ChatCard = ({
           setSelectedChatData(title, usernames);
         }}
       >
-        {usernames.map((name, index) => (
-          <CgProfile key={index} className="text-4xl" />
-        ))}
+        {usernames.map((name, index) => {
+          const user = userData.find((user) => user.username === name);
+          return (
+            <img
+              key={index}
+              src={user?.profile_pic || "default-profile-pic-url"}
+              alt={`${name}'s profile`}
+              className="w-10 h-10 rounded-full border-2 border-eucalyptus-400 bg-eucalyptus-950 p-2 text-6xl text-eucalyptus-200"
+            />
+          );
+        })}
         <p>{title}</p>
       </div>
     </>
