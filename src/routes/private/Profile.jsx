@@ -2,40 +2,38 @@ import React, { useState, useEffect } from "react";
 import { useUser, headers } from "./components/Hooks";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
+import { useTheme } from "../../ThemeContext";
 
 export const Profile = () => {
   const { userData } = useUser();
   const { username } = useParams();
   const [profilePic, setProfilePic] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    // Set the initial profile picture when the component mounts or userData changes
     if (userData && userData[0]?.profile_pic) {
       setProfilePic(userData[0].profile_pic);
     }
   }, [userData]);
 
   const handleProfilePic = async (event) => {
-    event.preventDefault();
     const file = event.target.files[0];
-    const fileName = file.name;
+    if (!file) return;
+    const fileName = `${username}/${file.name}`;
 
     try {
-      // Upload the new profile picture with the original file name
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("profile_pictures")
-        .upload(`${username}/${fileName}`, file, {
-          upsert: false,
-        });
+        .upload(fileName, file, { upsert: true });
+
       if (uploadError) throw uploadError;
 
-      // Get the public URL of the new profile picture
       const { data: urlData, error: urlError } = supabase.storage
         .from("profile_pictures")
-        .getPublicUrl(`${username}/${fileName}`);
+        .getPublicUrl(fileName);
+
       if (urlError) throw urlError;
 
-      // Update the user's profile picture URL in the database
       const filterParams = encodeURIComponent(JSON.stringify({ username }));
       const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
 
@@ -44,11 +42,9 @@ export const Profile = () => {
         headers,
         body: JSON.stringify({ profile_pic: urlData.publicUrl }),
       });
+
       if (!response.ok) throw new Error("Failed to update profile pic");
 
-      const result = await response.json();
-
-      // Update the profilePic state to trigger a UI update
       setProfilePic(urlData.publicUrl);
     } catch (error) {
       console.error("Error handling profile picture: ", error.message);
@@ -56,16 +52,51 @@ export const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full bg-[#16181c] text-white">
-      <div className="flex flex-col items-center w-full p-5">
-        <div className="flex flex-col items-center gap-5">
-          <input type="file" accept="image/*" onChange={handleProfilePic} />
-          <img
-            src={profilePic || userData[0]?.profile_pic}
-            alt="profile-pic"
-            className="w-40 h-40 rounded-full"
-          />
-          <h1>{username}</h1>
+    <div
+      className={`flex flex-col items-center justify-center w-full h-full ${
+        theme === "light" ? "bg-white text-black" : "bg-[#16181c] text-white"
+      }`}
+    >
+      <div className="flex flex-col items-center w-full h-full justify-center p-5">
+        <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center h-full w-full gap-5">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePic}
+              className=" h-fit w-fit opacity-90 cursor-pointer"
+            />
+            <img
+              src={
+                profilePic ||
+                userData[0]?.profile_pic ||
+                "default-profile-pic-url"
+              }
+              alt="profile-pic"
+              className="w-40 h-40 rounded-full object-cover"
+            />
+            <p
+              className={` bottom-0 right-0 p-2 rounded-lg ${
+                theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
+              }`}
+            >
+              {userData[0]?.profile_pic
+                ? "Change Profile Picture"
+                : "Upload Profile Picture"}
+            </p>
+          </div>
+          <h1 className="text-3xl font-bold">{username}</h1>
+          <p className="text-lg">{userData[0]?.full_name}</p>
+        </div>
+        <div className="flex flex-col items-center mt-8">
+          <button
+            onClick={toggleTheme}
+            className={`p-2 rounded-lg ${
+              theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
+            }`}
+          >
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
         </div>
       </div>
     </div>

@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../supabaseConfig";
-import ChatSettings from "./components/ChatSettings";
 import { getUserData, headers } from "./components/Hooks";
-import { useTheme } from "../../ThemeContext"; // Import the useTheme hook
+import { useTheme } from "../../ThemeContext";
 
-const Messages = ({ selectedChat, userData }) => {
+const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const containerRef = useRef(null);
 
-  const { username, full_name } = getUserData(); // Ensure user data is correctly fetched
-  const { theme, toggleTheme } = useTheme(); // Use the theme context
+  const username = userData?.[0]?.username || "defaultUsername";
+  const full_name = userData?.[0]?.full_name || "defaultFullName";
+
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const channel = supabase
@@ -24,7 +25,6 @@ const Messages = ({ selectedChat, userData }) => {
       )
       .subscribe();
 
-    // Cleanup subscription on component unmount
     return () => {
       channel.unsubscribe();
     };
@@ -84,7 +84,20 @@ const Messages = ({ selectedChat, userData }) => {
       if (!response.ok) {
         throw new Error(result.error || "Failed to send message");
       }
-      setMessage(""); // Clear the message input after successful send
+      setMessage("");
+    } catch (error) {
+      console.error("There was a problem with your fetch operation:", error);
+    }
+    try {
+      const { error } = await supabase.from("messages").insert({
+        chat_id: Number(selectedChat),
+        message_text: message,
+        user_name: username,
+      });
+      if (error) {
+        console.error("Error inserting message:", error.message);
+        return;
+      }
     } catch (error) {
       console.error("There was a problem with your fetch operation:", error);
     }
@@ -102,42 +115,18 @@ const Messages = ({ selectedChat, userData }) => {
         theme === "light" ? "bg-white" : "bg-dark text-white"
       }`}
     >
-      {/* Header */}
       <div
         className={`flex items-center justify-between p-4 border-b ${
           theme === "light" ? "border-gray-300" : "border-dark-lighter"
         }`}
       >
-        <h2 className="text-xl font-semibold">Messages</h2>
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            placeholder="Search"
-            className={`p-2 border ${
-              theme === "light"
-                ? "border-gray-300 bg-white"
-                : "border-dark-lighter bg-dark-lighter"
-            } rounded-lg`}
-          />
-          <button
-            className={`p-2 ${
-              theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
-            } rounded-lg`}
-          >
-            Search
-          </button>
-          <button
-            onClick={toggleTheme}
-            className={`p-2 ${
-              theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
-            } rounded-lg`}
-          >
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
-        </div>
+        <h2 className="text-xl font-semibold capitalize">
+          {selectedChatData.title || selectedChatData.chat_name}
+        </h2>
+
+        <div className="flex items-center space-x-2"></div>
       </div>
 
-      {/* Messages */}
       <div
         ref={containerRef}
         className="flex flex-col overflow-y-scroll no-scrollbar w-full p-5"
@@ -145,7 +134,7 @@ const Messages = ({ selectedChat, userData }) => {
       >
         {messages.map((msg) => (
           <div
-            key={msg.id} // Ensure that msg.id is unique for each message
+            key={msg.id || `${msg.chat_id}-${msg.timestamp}-${msg.user_name}`}
             className={`${
               msg.user_name === username ? "self-end" : "self-start"
             } p-2 mb-4 rounded-lg w-fit flex flex-col`}
@@ -153,9 +142,14 @@ const Messages = ({ selectedChat, userData }) => {
             <div className="flex items-center gap-2">
               <img
                 src={
-                  userData.find((user) => user.username === msg.user_name)
-                    ?.profile_pic
+                  usersData && Array.isArray(usersData)
+                    ? usersData
+                        .filter((user) => user)
+                        .find((user) => user.username === msg.user_name)
+                        ?.profile_pic || "defaultProfilePicUrl"
+                    : "defaultProfilePicUrl"
                 }
+                alt={`${msg.user_name}'s profile`}
                 className="w-10 h-10 rounded-full border border-gray-300"
               />
               <p
@@ -187,7 +181,6 @@ const Messages = ({ selectedChat, userData }) => {
         ))}
       </div>
 
-      {/* Message Input */}
       <form
         onSubmit={handleSendMessage}
         className={`flex items-center p-4 border-t ${

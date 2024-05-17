@@ -1,69 +1,77 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-import { HiHome, HiSearch, HiStar, HiTrash } from "react-icons/hi";
-import { IoSettings } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { NavLink } from "react-router-dom";
-import { getUserData, useUser } from "./Hooks";
-import { useTheme } from "../../../ThemeContext";
-import { supabase } from "../../../../supabaseConfig";
+import { useState, useEffect } from "react";
+import { HiHome } from "react-icons/hi";
 import { FaSignOutAlt } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
+import { useTheme } from "../../../ThemeContext";
+import { getUserData, useUser } from "./Hooks";
 
-const SideNav = () => {
-  const [selected, setSelected] = useState(0);
+export const SideNav = () => {
+  const [selected, setSelected] = useState(() => {
+    const savedSelected = localStorage.getItem("selectedNav");
+    return savedSelected !== null ? parseInt(savedSelected, 10) : 0;
+  });
+  const [profilePic, setProfilePic] = useState(null);
+  const { theme } = useTheme();
   const { username } = getUserData();
-
   const { userData } = useUser();
-  console.log(userData);
 
-  const { theme } = useTheme(); // Use the theme context
+  useEffect(() => {
+    if (userData.length > 0) {
+      const user = userData.find((user) => user.username === username);
+      if (user) {
+        setProfilePic(user.profile_pic);
+      }
+    }
+  }, [userData, username]);
+
+  const handleNavClick = (id, url) => {
+    setSelected(id);
+    localStorage.setItem("selectedNav", id);
+    window.location.href = url;
+  };
 
   return (
     <nav
-      className={`h-full w-fit p-4 flex flex-col items-center gap-2 border-r-4 ${
-        theme === "light"
-          ? "border-r-black bg-gray-100"
-          : "border-r-white bg-dark"
+      className={`h-full w-fit p-4 flex flex-col items-center gap-2 ${
+        theme === "light" ? "bg-gray-100" : "bg-dark"
       }`}
     >
-      <NavLink to={`/${username}`}>
-        <img
-          src={userData.find((user) => user.username === username)?.profile_pic}
-          alt={`${username}'s profile`}
-          className={`w-10 h-10 rounded-full border-2 ${
-            theme === "light" ? "border-gray-300" : "border-dark-lighter"
-          }`}
-        />
-      </NavLink>
-      <NavItem selected={selected === 0} id={0} setSelected={setSelected}>
-        <HiHome
-          onClick={() => {
-            window.location.href = "/home";
-          }}
-        />
+      <img
+        src={profilePic || "default-profile-pic-url"}
+        alt={`${username}'s profile`}
+        className={`w-10 h-10 rounded-full border-2 ${
+          theme === "light" ? "border-gray-300" : "border-dark-lighter"
+        }`}
+      />
+
+      <NavItem
+        selected={selected === 0}
+        id={0}
+        onClick={() => handleNavClick(0, "/home")}
+      >
+        <HiHome />
       </NavItem>
-      {/* <NavItem selected={selected === 1} id={1} setSelected={setSelected}>
-        <HiSearch />
-      </NavItem> */}
-      {/* <NavItem selected={selected === 2} id={2} setSelected={setSelected}>
-        <HiStar />
+      <NavItem
+        selected={selected === 1}
+        id={1}
+        onClick={() => handleNavClick(1, `/${username}`)}
+      >
+        <CgProfile />
       </NavItem>
-      <NavItem selected={selected === 3} id={3} setSelected={setSelected}>
-        <HiTrash />
-      </NavItem> */}
-      <NavItem selected={selected === 1} id={1} setSelected={setSelected}>
-        <FaSignOutAlt
-          onClick={() => {
-            supabase.auth.signOut();
-          }}
-        />
+      <NavItem
+        selected={selected === 2}
+        id={2}
+        onClick={() => handleNavClick(2, "/logout")}
+      >
+        <FaSignOutAlt />
       </NavItem>
     </nav>
   );
 };
 
-const NavItem = ({ children, selected, id, setSelected }) => {
-  const { theme } = useTheme(); // Use the theme context
+const NavItem = ({ children, selected, id, onClick }) => {
+  const { theme } = useTheme();
 
   return (
     <motion.button
@@ -72,7 +80,7 @@ const NavItem = ({ children, selected, id, setSelected }) => {
           ? "bg-gray-200 hover:bg-gray-300 text-black"
           : "bg-gray-700 hover:bg-gray-600 text-white"
       }`}
-      onClick={() => setSelected(id)}
+      onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -90,5 +98,3 @@ const NavItem = ({ children, selected, id, setSelected }) => {
     </motion.button>
   );
 };
-
-export default SideNav;

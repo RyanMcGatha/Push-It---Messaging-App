@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { headers } from "./Hooks";
+import React from "react";
 import { useTheme } from "../../../ThemeContext";
 import { BsFillMicFill } from "react-icons/bs";
 
@@ -9,55 +8,30 @@ export const ChatCard = ({
   usernames,
   setSelectedChat,
   setSelectedChatData,
+  usersData,
+  selectedChatId,
 }) => {
-  const { theme } = useTheme(); // Use the theme context
+  const { theme } = useTheme();
 
-  const [usersData, setUsersData] = useState([]);
-  const [error, setError] = useState(null);
+  const handleChatClick = () => {
+    setSelectedChat(id);
+    setSelectedChatData({ title, usernames });
+  };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const validUsernames = usernames.filter(
-          (username) => username.trim() !== ""
-        );
-
-        const usersDataArray = await Promise.all(
-          validUsernames.map(async (username) => {
-            const filterParams = encodeURIComponent(
-              JSON.stringify({
-                username,
-              })
-            );
-
-            const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
-
-            const response = await fetch(url, { method: "GET", headers });
-            if (!response.ok) throw new Error("Failed to fetch user profile");
-            const data = await response.json();
-            return data.data[0]; // Assuming data.data is an array
-          })
-        );
-
-        setUsersData(usersDataArray);
-      } catch (error) {
-        setError(error);
-        console.error("Failed to fetch users:", error);
-      }
-    };
-
-    fetchUsers();
-  }, [usernames]);
+  const isSelected = id === selectedChatId;
 
   return (
     <div
-      className={`flex items-center p-3 mb-2 rounded-md cursor-pointer ${
-        theme === "light" ? "hover:bg-gray-200" : "hover:bg-dark-lighter"
+      className={`flex items-center p-3 mb-2 rounded-md cursor-pointer transition-colors ${
+        isSelected
+          ? theme === "light"
+            ? "bg-gray-200"
+            : "bg-dark"
+          : theme === "light"
+          ? "hover:bg-gray-200"
+          : "hover:bg-dark"
       }`}
-      onClick={() => {
-        setSelectedChat(id);
-        setSelectedChatData({ title, usernames });
-      }}
+      onClick={handleChatClick}
     >
       {usernames
         .filter((name) => name.trim() !== "")
@@ -65,8 +39,7 @@ export const ChatCard = ({
           const user = usersData.find((user) => user?.username === name);
           const profilePic = user
             ? user.profile_pic
-            : "default-profile-pic-url"; // Use a default image if profile_pic is not found
-
+            : "default-profile-pic-url";
           return (
             <img
               key={index}
@@ -80,7 +53,7 @@ export const ChatCard = ({
       <div className="flex-grow">
         <div className="flex justify-between">
           <p
-            className={`font-semibold ${
+            className={`font-semibold capitalize ${
               theme === "light" ? "text-black" : "text-white"
             }`}
           >
@@ -89,21 +62,9 @@ export const ChatCard = ({
           <span className="text-gray-400 text-sm">12:23</span>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-gray-400 text-sm flex items-center">
-            <BsFillMicFill className="mr-1" /> Voice message
-          </p>
-          <div className="flex items-center space-x-1">
-            <span className="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-              9
-            </span>
-            <span className="text-blue-500">
-              <BsFillMicFill />
-            </span>
-          </div>
+          <div className="flex items-center space-x-1"></div>
         </div>
       </div>
-
-      {error && <p className="text-red-500">{error.message}</p>}
     </div>
   );
 };
