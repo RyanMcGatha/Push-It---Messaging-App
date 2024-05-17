@@ -5,12 +5,16 @@ import Messages from "./Messages";
 import { useUser } from "./components/Hooks";
 import { useTheme } from "../../ThemeContext";
 
+const tabs = ["Ones", "Groups", "Add Chat"];
+
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedChat, setSelectedChat] = useState(0);
   const [selectedChatData, setSelectedChatData] = useState({});
   const { userData } = useUser();
   const { theme, toggleTheme } = useTheme(); // Use the theme context
+
+  console.log(selectedChatData);
 
   return (
     <div
@@ -54,7 +58,11 @@ const Home = () => {
         </div>
       </div>
       <div className={`w-2/3 ${theme === "light" ? "bg-white" : "bg-dark"}`}>
-        <Messages selectedChat={selectedChat} userData={userData} />
+        <Messages
+          selectedChat={selectedChat}
+          userData={userData}
+          selectedChatData={selectedChatData}
+        />
       </div>
     </div>
   );
@@ -62,7 +70,6 @@ const Home = () => {
 
 export default Home;
 
-const tabs = ["Ones", "Groups", "Add Chat"];
 const Chip = ({ text, selected, setSelected }) => {
   const { theme } = useTheme(); // Use the theme context
 

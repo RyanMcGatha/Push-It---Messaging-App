@@ -14,6 +14,7 @@ const SideNav = () => {
   const { username } = getUserData();
 
   const { userData } = useUser();
+  console.log(userData);
 
   const { theme } = useTheme(); // Use the theme context
 

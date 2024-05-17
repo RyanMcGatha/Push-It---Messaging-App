@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getUserData } from "./components/Hooks";
-import ChatCard from "./components/ChatCard.jsx";
+import { ChatCard } from "./components/ChatCard.jsx";
 
 const Chats = ({
   selected,

@@ -3,7 +3,7 @@ import { headers } from "./Hooks";
 import { useTheme } from "../../../ThemeContext";
 import { BsFillMicFill } from "react-icons/bs";
 
-const ChatCard = ({
+export const ChatCard = ({
   id,
   title,
   usernames,
@@ -107,5 +107,3 @@ const ChatCard = ({
     </div>
   );
 };
-
-export default ChatCard;
