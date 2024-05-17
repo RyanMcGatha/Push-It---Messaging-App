@@ -8,6 +8,7 @@ import {
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MotionConfig } from "framer-motion";
+import OnesCard from "./OnesCard";
 
 const ChatSettings = ({ id, chats, onDelete }) => {
   const [open, setOpen] = useState(false);
@@ -44,10 +45,7 @@ const ChatSettings = ({ id, chats, onDelete }) => {
   };
 
   return (
-    <motion.div
-      animate={open ? "open" : "closed"}
-      className="relative z-10 left-24 pl-4 bottom-3 h-5"
-    >
+    <motion.div animate={open ? "open" : "closed"} className="relative z-10 ">
       <button
         onClick={() => setOpen((pv) => !pv)}
         className=" text-eucalyptus-200 text-lg md:text-xl underline hover:text-eucalyptus-400 flex items-center"

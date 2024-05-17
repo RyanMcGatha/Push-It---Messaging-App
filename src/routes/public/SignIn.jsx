@@ -1,54 +1,30 @@
 import { useAnimate } from "framer-motion";
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-import { useAuth } from "../../AuthContext";
 import { supabase } from "../../../supabaseConfig";
-import { Navigate, redirect } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { redirect, Link } from "react-router-dom";
 
 const SignIn = () => {
   return (
     <MouseImageTrail
       renderImageBuffer={50}
       rotationRange={25}
-      images={[
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-        "pushitt.png",
-      ]}
+      images={new Array(16).fill("pushitt.png")}
     >
       <section className="h-screen bg-eucalyptus-950">
         <Copy />
-
         <WatermarkWrapper />
       </section>
     </MouseImageTrail>
   );
 };
 
-const Copy = () => {
-  return (
-    <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
-      <Logo />
-
-      <Form />
-    </section>
-  );
-};
+const Copy = () => (
+  <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
+    <Logo />
+    <Form />
+  </section>
+);
 
 const Form = () => {
   const [email, setEmail] = useState("");
@@ -70,28 +46,21 @@ const Form = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      alert(error.error_description || error.message);
-    } else {
-    }
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { error, data } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        alert(error.message);
+      } else if (data.user) {
+        redirect("/home");
+      }
     } catch (error) {
-      console.log(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
     }
-    if (error) {
-      alert(error.error_description || error.message);
-    }
-    if (user) {
-      redirect("/home");
-    }
-    setLoading(false);
   };
 
   const handleFocus = (event) => {
@@ -100,7 +69,7 @@ const Form = () => {
 
   return (
     <>
-      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-150">
+      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-[1.8]">
         <motion.div
           initial="initial"
           whileInView="animate"
@@ -108,7 +77,7 @@ const Form = () => {
             staggerChildren: 0.05,
           }}
           viewport={{ once: true }}
-          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-2 font-semibold"
+          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
           style={{
             backgroundAttachment: "fixed",
             backdropFilter: "blur(15px)",
@@ -117,22 +86,22 @@ const Form = () => {
           <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
             <motion.h1
               variants={primaryVariants}
-              className="p-2 text-center text-6xl font-semibold"
+              className=" p-2 text-center text-4xl font-semibold"
             >
               Sign In
             </motion.h1>
             <motion.p
               variants={primaryVariants}
-              className="p-2 text-center text-3xl font-semibold"
+              className="p-2 text-center text-xl font-semibold"
             >
               Sign in and just Push It!
             </motion.p>
 
-            <form onSubmit={handleLogin} className="w-full text-xl">
+            <form onSubmit={handleLogin} className="w-full">
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="email-input"
-                  className="mb-1 inline-block font-extrabold"
+                  className="mb-1 inline-block text-sm font-medium"
                 >
                   Email<span className="p-1 text-red-500">*</span>
                 </label>
@@ -152,7 +121,7 @@ const Form = () => {
               <motion.div variants={primaryVariants} className="mb-2 w-full">
                 <label
                   htmlFor="password-input"
-                  className="mb-1 inline-block font-extrabold"
+                  className="mb-1 inline-block text-sm font-medium"
                 >
                   Password<span className=" pl-1 text-red-500">*</span>
                 </label>
@@ -168,11 +137,11 @@ const Form = () => {
                   onFocus={handleFocus}
                 />
               </motion.div>
-              <div className=" text-lg text-center flex justify-center gap-1 my-1 w-full">
-                Dont have an account?
+              <div className="text-xs text-center flex justify-center gap-1">
+                Don't have an account?
                 <Link
                   to={"/signup"}
-                  className="underline hover:text-eucalyptus-800 "
+                  className=" underline hover:text-eucalyptus-800"
                 >
                   Sign Up!
                 </Link>
@@ -194,41 +163,26 @@ const Form = () => {
   );
 };
 
-const Logo = () => {
-  return (
-    <img
-      src="pushitSlogan.png"
-      alt="Sully's Logo"
-      className="w-56 h-auto md:fixed md:left-5 md:top-5 relative"
-    />
-  );
-};
+const Logo = () => (
+  <img
+    src="pushitSlogan.png"
+    alt="Push It Logo"
+    className="w-64 mt-5 h-auto md:fixed md:left-5 md:top-5 m-3"
+  />
+);
 
 const primaryVariants = {
-  initial: {
-    y: 55,
-    opacity: 0,
-  },
-  animate: {
-    y: 0,
-    opacity: 1,
-  },
+  initial: { y: 55, opacity: 0 },
+  animate: { y: 0, opacity: 1 },
 };
 
-const WatermarkWrapper = () => {
-  return (
-    <>
-      <Watermark text="Push It! Push It!" />
-      <Watermark text="Push It! Push It!" reverse />
-      <Watermark text="Push It! Push It!" />
-      <Watermark text="Push It! Push It!" reverse />
-      <Watermark text="Push It! Push It!" />
-      <Watermark text="Push It! Push It!" reverse />
-      <Watermark text="Push It! Push It!" />
-      <Watermark text="Push It! Push It!" reverse />
-    </>
-  );
-};
+const WatermarkWrapper = () => (
+  <>
+    {[...Array(8)].map((_, i) => (
+      <Watermark key={i} text="Push It! Push It!" reverse={i % 2 === 1} />
+    ))}
+  </>
+);
 
 const Watermark = ({ reverse, text }) => (
   <div className="flex -translate-y-12 select-none overflow-hidden">
@@ -245,70 +199,51 @@ const Watermark = ({ reverse, text }) => (
   </div>
 );
 
-const TranslateWrapper = ({ children, reverse }) => {
-  return (
-    <motion.div
-      initial={{ translateX: reverse ? "-100%" : "0%" }}
-      animate={{ translateX: reverse ? "0%" : "-100%" }}
-      transition={{ duration: 75, repeat: Infinity, ease: "linear" }}
-      className="flex"
-    >
-      {children}
-    </motion.div>
-  );
-};
+const TranslateWrapper = ({ children, reverse }) => (
+  <motion.div
+    initial={{ translateX: reverse ? "-100%" : "0%" }}
+    animate={{ translateX: reverse ? "0%" : "-100%" }}
+    transition={{ duration: 75, repeat: Infinity, ease: "linear" }}
+    className="flex"
+  >
+    {children}
+  </motion.div>
+);
 
 const MouseImageTrail = ({
   children,
-
   images,
-
   renderImageBuffer,
-
   rotationRange,
 }) => {
   const [scope, animate] = useAnimate();
-
   const lastRenderPosition = useRef({ x: 0, y: 0 });
   const imageRenderCount = useRef(0);
 
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
-
     const distance = calculateDistance(
       clientX,
       clientY,
       lastRenderPosition.current.x,
       lastRenderPosition.current.y
     );
-
     if (distance >= renderImageBuffer) {
       lastRenderPosition.current.x = clientX;
       lastRenderPosition.current.y = clientY;
-
       renderNextImage();
     }
   };
 
-  const calculateDistance = (x1, y1, x2, y2) => {
-    const deltaX = x2 - x1;
-    const deltaY = y2 - y1;
-
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    return distance;
-  };
+  const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
 
   const renderNextImage = () => {
     const imageIndex = imageRenderCount.current % images.length;
     const selector = `[data-mouse-move-index="${imageIndex}"]`;
-
     const el = document.querySelector(selector);
-
     el.style.top = `${lastRenderPosition.current.y}px`;
     el.style.left = `${lastRenderPosition.current.x}px`;
     el.style.zIndex = imageRenderCount.current.toString();
-
     const rotation = Math.random() * rotationRange;
 
     animate(
@@ -316,16 +251,8 @@ const MouseImageTrail = ({
       {
         opacity: [0, 1],
         transform: [
-          `translate(-50%, -25%) scale(0.5) ${
-            imageIndex % 2
-              ? `rotate(${rotation}deg)`
-              : `rotate(-${rotation}deg)`
-          }`,
-          `translate(-50%, -50%) scale(1) ${
-            imageIndex % 2
-              ? `rotate(-${rotation}deg)`
-              : `rotate(${rotation}deg)`
-          }`,
+          `translate(-50%, -25%) scale(0.5) rotate(${rotation}deg)`,
+          `translate(-50%, -50%) scale(1) rotate(-${rotation}deg)`,
         ],
       },
       { type: "spring", damping: 15, stiffness: 200 }
@@ -333,13 +260,11 @@ const MouseImageTrail = ({
 
     animate(
       selector,
-      {
-        opacity: [1, 0],
-      },
+      { opacity: [1, 0] },
       { ease: "linear", duration: 0.5, delay: 1 }
     );
 
-    imageRenderCount.current = imageRenderCount.current + 1;
+    imageRenderCount.current += 1;
   };
 
   return (
@@ -349,7 +274,6 @@ const MouseImageTrail = ({
       onMouseMove={handleMouseMove}
     >
       {children}
-
       {images.map((img, index) => (
         <img
           className="pointer-events-none absolute left-0 top-0 h-36 w-auto object-cover opacity-0"

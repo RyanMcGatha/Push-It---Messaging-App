@@ -11,8 +11,11 @@
   scrollbar-width: none;
 }
 
-:root {
+:root,
+#root,
+body,
+html {
+  background: gray;
   overflow: hidden;
-  background: #0c5b35;
   max-height: 100vh;
 }

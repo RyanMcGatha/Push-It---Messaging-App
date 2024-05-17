@@ -6,14 +6,13 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [react()],
   server: {
-    historyApiFallback: true, // Add this line to ensure history API fallback is enabled
+    historyApiFallback: true,
     fs: {
       allow: [".."],
     },
   },
   resolve: {
     alias: {
-      // Setup aliases if necessary
       "@": resolve(__dirname, "./src"),
     },
   },
