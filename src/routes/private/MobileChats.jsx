@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Chats from "./Chats";
-import Messages from "./Messages";
+import { Chip, tabs } from "./Home";
 import { useUser, addChat, headers } from "./components/Hooks";
 import { useTheme } from "../../ThemeContext";
-
-export const tabs = ["Ones", "Groups", "Add Chat"];
-
-const Home = () => {
+import Chats from "./Chats";
+const MobileChats = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedChat, setSelectedChat] = useState(0);
   const [selectedChatData, setSelectedChatData] = useState({});
@@ -59,9 +56,9 @@ const Home = () => {
       : "bg-gray-700 text-white placeholder-gray-400";
 
   return (
-    <div className={`w-full h-full flex ${themeClasses}`}>
+    <div className={`flex flex-col w-full h-full ${themeClasses}`}>
       <div
-        className={` hidden md:flex flex-col w-full md:w-30p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
+        className={`flex flex-col w-full h-full overflow-y-scroll no-scrollbar `}
       >
         <div className="flex flex-col items-center w-full p-5">
           <input
@@ -89,41 +86,8 @@ const Home = () => {
           />
         </div>
       </div>
-      <div
-        className={`w-full md:w-70p h-90p md:h-full ${
-          theme === "light" ? "bg-white" : "bg-dark"
-        }`}
-      >
-        <Messages
-          selectedChat={selectedChat}
-          userData={userData}
-          selectedChatData={selectedChatData}
-          usersData={usersData}
-        />
-      </div>
     </div>
   );
 };
 
-export default Home;
-
-export const Chip = React.memo(({ text, selected, setSelected }) => {
-  const { theme } = useTheme();
-
-  const chipClasses = selected
-    ? theme === "light"
-      ? "text-white bg-gray-700"
-      : "text-white bg-gray-700"
-    : theme === "light"
-    ? "text-gray-600 hover:text-gray-800 hover:bg-gray-300"
-    : "text-gray-400 hover:text-gray-200 hover:bg-gray-600";
-
-  return (
-    <button
-      onClick={() => setSelected(text)}
-      className={`text-sm transition-colors px-4 py-2 rounded-full ${chipClasses}`}
-    >
-      {text}
-    </button>
-  );
-});
+export default MobileChats;

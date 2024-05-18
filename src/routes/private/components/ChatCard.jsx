@@ -49,7 +49,7 @@ export const ChatCard = ({
 
   return (
     <div
-      className={`flex items-center p-3 mb-2 rounded-md cursor-pointer transition-colors ${
+      className={`flex items-center p-3 mb-2 w- rounded-md cursor-pointer transition-colors ${
         isSelected
           ? theme === "light"
             ? "bg-gray-200"
