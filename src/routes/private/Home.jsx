@@ -61,8 +61,7 @@ const Home = () => {
   return (
     <div className={`w-full h-full flex ${themeClasses}`}>
       <div
-        className={`flex flex-col overflow-y-scroll h-full no-scrollbar ${sidebarClasses}`}
-        style={{ width: "30%" }}
+        className={` hidden md:flex flex-col w-full md:w-30p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
       >
         <div className="flex flex-col items-center w-full p-5">
           <input
@@ -90,7 +89,11 @@ const Home = () => {
           />
         </div>
       </div>
-      <div className={`w-2/3 ${theme === "light" ? "bg-white" : "bg-dark"}`}>
+      <div
+        className={`w-full md:w-70p h-90p md:h-full ${
+          theme === "light" ? "bg-white" : "bg-dark"
+        }`}
+      >
         <Messages
           selectedChat={selectedChat}
           userData={userData}
