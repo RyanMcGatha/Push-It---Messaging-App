@@ -1,24 +1,19 @@
 import React from "react";
 import { useAuth } from "../AuthContext";
 import SignIn from "./public/SignIn";
-import PrivateLayout from "./private/PrivateLayout";
-import Home from "./private/Home";
-import ErrorPage from "./public/ErrorPage";
-import { Profile } from "./private/Profile";
+import PrivateLayout from "../routes/private/PrivateLayout";
+import Home from "../routes/private/Home";
+import ErrorPage from "../routes/public/ErrorPage";
+import { Profile } from "../routes/private/Profile";
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-
 import SignUp from "./public/SignUp";
 
 const Routes = () => {
   const { session } = useAuth();
-
-  if (session === "loading") {
-    return <div>Loading...</div>;
-  }
 
   const routes = [
     {
