@@ -64,7 +64,8 @@ export const Profile = () => {
               type="file"
               accept="image/*"
               onChange={handleProfilePic}
-              className=" h-fit w-fit opacity-90 cursor-pointer"
+              className="hidden"
+              id="profilePicInput"
             />
             <img
               src={
@@ -75,15 +76,16 @@ export const Profile = () => {
               alt="profile-pic"
               className="w-40 h-40 rounded-full object-cover"
             />
-            <p
-              className={` bottom-0 right-0 p-2 rounded-lg ${
+            <button
+              onClick={() => document.getElementById("profilePicInput").click()}
+              className={`bottom-0 right-0 p-2 rounded-lg ${
                 theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
               }`}
             >
               {userData[0]?.profile_pic
                 ? "Change Profile Picture"
                 : "Upload Profile Picture"}
-            </p>
+            </button>
           </div>
           <h1 className="text-3xl font-bold">{username}</h1>
           <p className="text-lg">{userData[0]?.full_name}</p>

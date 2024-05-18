@@ -5,6 +5,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { useTheme } from "../../../ThemeContext";
 import { getUserData, useUser } from "./Hooks";
+import { supabase } from "../../../../supabaseConfig";
 
 export const SideNav = () => {
   const [selected, setSelected] = useState(() => {
@@ -62,7 +63,10 @@ export const SideNav = () => {
       <NavItem
         selected={selected === 2}
         id={2}
-        onClick={() => handleNavClick(2, "/logout")}
+        onClick={() => {
+          supabase.auth.signOut();
+          localStorage.removeItem("selectedNav");
+        }}
       >
         <FaSignOutAlt />
       </NavItem>
