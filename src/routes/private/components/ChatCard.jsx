@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "../../../ThemeContext";
-import { BsFillMicFill } from "react-icons/bs";
+import { BiTrash } from "react-icons/bi";
+import { headers } from "./Hooks";
 
 export const ChatCard = ({
   id,
@@ -10,6 +11,9 @@ export const ChatCard = ({
   setSelectedChatData,
   usersData,
   selectedChatId,
+  chats,
+  setChats,
+  onChatDelete,
 }) => {
   const { theme } = useTheme();
 
@@ -19,6 +23,29 @@ export const ChatCard = ({
   };
 
   const isSelected = id === selectedChatId;
+
+  const handleChatDelete = async (event) => {
+    event.stopPropagation();
+
+    const chatId = Number(id);
+    const url = `https://us-east-2.aws.neurelo.com/rest/chats/${chatId}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!response.ok) throw new Error("Failed to delete chat");
+
+      setChats((prevChats) =>
+        prevChats.filter((chat) => chat.chat_id !== chatId)
+      );
+      onChatDelete("Chat deleted successfully");
+    } catch (error) {
+      console.error("Error deleting chat: ", error.message);
+    }
+  };
 
   return (
     <div
@@ -59,7 +86,10 @@ export const ChatCard = ({
           >
             {title}
           </p>
-          <span className="text-gray-400 text-sm">12:23</span>
+          <BiTrash
+            onClick={handleChatDelete}
+            className="text-red-500 cursor-pointer"
+          />
         </div>
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-1"></div>

@@ -8,7 +8,7 @@ import { Link, Navigate } from "react-router-dom";
 const SignUp = () => {
   useEffect(() => {
     const handleResize = () => {
-      const vh = window.innerHeight * 0.01; // Combined change to use correct value
+      const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     };
 

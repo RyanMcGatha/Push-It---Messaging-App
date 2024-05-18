@@ -57,7 +57,7 @@ export const getUserData = () => {
     fetchData();
   }, [username, full_name]);
 
-  return { chats, username, loading, error, full_name };
+  return { chats, username, loading, error, full_name, setChats };
 };
 
 export const useUser = () => {
