@@ -62,81 +62,83 @@ const Home = () => {
       : "bg-gray-700 text-white placeholder-gray-400";
 
   return (
-    <div className={`w-full h-full flex ${themeClasses}`}>
-      <div
-        className={`hidden md:flex flex-col w-full md:w-25p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
-      >
-        <div className="flex flex-col items-center w-full p-5">
-          <input
-            type="text"
-            placeholder="Search..."
-            className={`w-full p-3 rounded-full ${inputClasses} focus:outline-none`}
-          />
-          <div className="flex justify-around w-full mt-4 mb-4">
-            {tabs.map((tab) => (
-              <Chip
-                text={tab}
-                selected={selected === tab}
-                setSelected={handleSetSelected}
-                key={tab}
-              />
-            ))}
-          </div>
-          <Chats
-            selected={selected}
-            setSelectedChat={setSelectedChat} // <-- Ensure correct prop passing
-            selectedChatData={selectedChatData}
-            setSelectedChatData={setSelectedChatData}
-            userData={userData}
-            usersData={usersData}
-          />
-        </div>
-      </div>
-      <div className="w-full md:w-75p h-90p md:h-full">
-        <Messages
-          selectedChat={selectedChat}
-          userData={userData}
-          selectedChatData={selectedChatData}
-          usersData={usersData}
-          mobileChatsNav={mobileChatsNav}
-          setMobileChatsNav={setMobileChatsNav}
-        />
-      </div>
-      <div className="absolute top-1 left-32 w-full p-4 md:hidden">
-        <motion.div
-          animate={mobileChatsNav === "open" ? "open" : "closed"}
-          className="relative z-[30]"
+    <>
+      <div className={`w-full h-full flex ${themeClasses}`}>
+        <div
+          className={`hidden md:flex flex-col w-full md:w-25p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
         >
-          <button
-            onClick={() =>
-              setMobileChatsNav(mobileChatsNav === "open" ? "closed" : "open")
-            }
-            className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 bg-gray-100 hover:bg-indigo-500 transition-colors"
-          >
-            <span className="font-medium text-sm">Chats</span>
-            <motion.span variants={iconVariants}>
-              <FiChevronDown />
-            </motion.span>
-          </button>
-
-          <motion.div
-            initial={wrapperVariants.closed}
-            variants={wrapperVariants}
-            style={{ originY: "top", translateX: "-100%" }}
-            className="flex flex-col gap-2 p-2 rounded-lg bg-white shadow-xl absolute top-[120%] left-[50%] w-60 overflow-hidden"
-          >
+          <div className="flex flex-col items-center w-full p-5">
+            <input
+              type="text"
+              placeholder="Search..."
+              className={`w-full p-3 rounded-full ${inputClasses} focus:outline-none`}
+            />
+            <div className="flex justify-around w-full mt-4 mb-4">
+              {tabs.map((tab) => (
+                <Chip
+                  text={tab}
+                  selected={selected === tab}
+                  setSelected={handleSetSelected}
+                  key={tab}
+                />
+              ))}
+            </div>
             <Chats
               selected={selected}
-              setSelectedChat={setSelectedChat}
+              setSelectedChat={setSelectedChat} // <-- Ensure correct prop passing
               selectedChatData={selectedChatData}
               setSelectedChatData={setSelectedChatData}
               userData={userData}
               usersData={usersData}
             />
+          </div>
+        </div>
+        <div className="w-full md:w-75p h-90p md:h-full">
+          <Messages
+            selectedChat={selectedChat}
+            userData={userData}
+            selectedChatData={selectedChatData}
+            usersData={usersData}
+            mobileChatsNav={mobileChatsNav}
+            setMobileChatsNav={setMobileChatsNav}
+          />
+        </div>
+        <div className="absolute top-1 left-32 w-full p-4 md:hidden">
+          <motion.div
+            animate={mobileChatsNav === "open" ? "open" : "closed"}
+            className="relative z-[30]"
+          >
+            <button
+              onClick={() =>
+                setMobileChatsNav(mobileChatsNav === "open" ? "closed" : "open")
+              }
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 bg-gray-100 hover:bg-indigo-500 transition-colors"
+            >
+              <span className="font-medium text-sm">Chats</span>
+              <motion.span variants={iconVariants}>
+                <FiChevronDown />
+              </motion.span>
+            </button>
+
+            <motion.div
+              initial={wrapperVariants.closed}
+              variants={wrapperVariants}
+              style={{ originY: "top", translateX: "-100%" }}
+              className="flex flex-col gap-2 p-2 rounded-lg bg-white shadow-xl absolute top-[120%] left-[50%] w-60 overflow-hidden"
+            >
+              <Chats
+                selected={selected}
+                setSelectedChat={setSelectedChat}
+                selectedChatData={selectedChatData}
+                setSelectedChatData={setSelectedChatData}
+                userData={userData}
+                usersData={usersData}
+              />
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
