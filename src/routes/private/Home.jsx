@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Chats from "./Chats";
+import { Chats } from "./Chats";
 import Messages from "./Messages";
 import { useUser, addChat, headers } from "./components/Hooks";
 import { useTheme } from "../../ThemeContext";
@@ -8,7 +8,7 @@ export const tabs = ["Ones", "Groups", "Add Chat"];
 
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
-  const [selectedChat, setSelectedChat] = useState(0);
+  const [selectedChat, setSelectedChat] = useState(0); // <-- Ensure this is correctly defined
   const [selectedChatData, setSelectedChatData] = useState({});
   const { userData } = useUser();
   const { theme, toggleTheme } = useTheme();
@@ -61,7 +61,7 @@ const Home = () => {
   return (
     <div className={`w-full h-full flex ${themeClasses}`}>
       <div
-        className={` hidden md:flex flex-col w-full md:w-30p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
+        className={`hidden md:flex flex-col w-full md:w-25p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
       >
         <div className="flex flex-col items-center w-full p-5">
           <input
@@ -81,7 +81,7 @@ const Home = () => {
           </div>
           <Chats
             selected={selected}
-            setSelectedChat={setSelectedChat}
+            setSelectedChat={setSelectedChat} // <-- Ensure correct prop passing
             selectedChatData={selectedChatData}
             setSelectedChatData={setSelectedChatData}
             userData={userData}
@@ -90,7 +90,7 @@ const Home = () => {
         </div>
       </div>
       <div
-        className={`w-full md:w-70p h-90p md:h-full ${
+        className={`w-full md:w-75p h-90p md:h-full ${
           theme === "light" ? "bg-white" : "bg-dark"
         }`}
       >

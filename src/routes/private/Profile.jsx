@@ -3,6 +3,7 @@ import { useUser, headers } from "./components/Hooks";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../supabaseConfig";
 import { useTheme } from "../../ThemeContext";
+import MobileNav from "./components/MobileNav";
 
 export const Profile = () => {
   const { userData } = useUser();
@@ -53,10 +54,13 @@ export const Profile = () => {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center w-full h-full ${
+      className={`flex flex-col items-center justify-center w-full h-full p-5 ${
         theme === "light" ? "bg-white text-black" : "bg-[#16181c] text-white"
       }`}
     >
+      <div className="flex self-end">
+        <MobileNav />
+      </div>
       <div className="flex flex-col items-center w-full h-full justify-center p-5">
         <div className="flex flex-col items-center gap-10">
           <div className="flex flex-col items-center h-full w-full gap-5">

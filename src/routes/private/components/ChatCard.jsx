@@ -49,14 +49,14 @@ export const ChatCard = ({
 
   return (
     <div
-      className={`flex items-center p-3 mb-2 w- rounded-md cursor-pointer transition-colors ${
+      className={`flex items-center p-3 mb-1 w-full rounded-md cursor-pointer transition-colors overflow-hidden border ${
         isSelected
           ? theme === "light"
-            ? "bg-gray-200"
-            : "bg-dark"
+            ? "bg-gray-200 border-gray-300  "
+            : "bg-dark border-gray-400 "
           : theme === "light"
-          ? "hover:bg-gray-200"
-          : "hover:bg-dark"
+          ? "hover:bg-gray-200  border-gray-300"
+          : "hover:bg-dark border-gray-700 "
       }`}
       onClick={handleChatClick}
     >

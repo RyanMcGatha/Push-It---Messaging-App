@@ -3,7 +3,7 @@ import { getUserData } from "./components/Hooks";
 import { ChatCard } from "./components/ChatCard.jsx";
 import AddChat from "./components/AddChat.jsx";
 
-const Chats = ({
+export const Chats = ({
   selected,
   setSelectedChat,
   setSelectedChatData,
@@ -17,7 +17,7 @@ const Chats = ({
   useEffect(() => {
     if (!loading && !error && chats.length > 0) {
       const initialChat = chats[0];
-      setSelectedChat(initialChat.chat_id);
+      setSelectedChat(initialChat.chat_id); // <-- Ensure setSelectedChat is called correctly
       setSelectedChatData(initialChat);
       setSelectedChatId(initialChat.chat_id);
     }
@@ -112,5 +112,3 @@ const Chats = ({
     </div>
   );
 };
-
-export default Chats;

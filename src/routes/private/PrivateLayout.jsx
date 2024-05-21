@@ -6,7 +6,9 @@ const PrivateLayout = () => {
   return (
     <>
       <div className="w-screen h-screen flex ">
-        <SideNav />
+        <div className=" hidden md:flex">
+          <SideNav />
+        </div>
         <Outlet />
       </div>
     </>

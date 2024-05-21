@@ -11,7 +11,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import SignUp from "./public/SignUp";
-import Chats from "./private/Chats";
+
 import MobileChats from "./private/MobileChats";
 
 const Routes = () => {
