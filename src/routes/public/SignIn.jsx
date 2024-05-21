@@ -1,29 +1,41 @@
-import { useAnimate } from "framer-motion";
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "../../../supabaseConfig";
 import { redirect, Link } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
+import { twMerge } from "tailwind-merge";
 
 const SignIn = () => {
   return (
-    <MouseImageTrail
-      renderImageBuffer={50}
-      rotationRange={25}
-      images={new Array(16).fill("pushitt.png")}
-    >
-      <section className="h-screen bg-eucalyptus-950">
-        <Copy />
-        <WatermarkWrapper />
-      </section>
-    </MouseImageTrail>
+    <div className="bg-zinc-950 py-20 text-zinc-200 selection:bg-zinc-600 w-screen h-screen flex items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.25, ease: "easeInOut" }}
+        className="relative z-10 mx-auto w-full max-w-xl p-4"
+      >
+        <Heading />
+        <Form />
+      </motion.div>
+
+      <CornerGrid />
+    </div>
   );
 };
 
-const Copy = () => (
-  <section className="z-[999999] fixed flex flex-col w-screen h-screen items-center md:justify-center gap-10">
-    <Logo />
-    <Form />
-  </section>
+const Heading = () => (
+  <div>
+    <NavLogo />
+    <div className="mb-9 mt-6 space-y-1.5">
+      <h1 className="text-2xl font-semibold">Sign in to your account</h1>
+      <p className="text-zinc-400">
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-blue-400">
+          Create one.
+        </Link>
+      </p>
+    </div>
+  </div>
 );
 
 const Form = () => {
@@ -63,227 +75,119 @@ const Form = () => {
     }
   };
 
-  const handleFocus = (event) => {
-    event.target.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
-    <>
-      <div className="px-5 md:scale-110 lg:scale-125 xl:scale-[1.8]">
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          transition={{
-            staggerChildren: 0.05,
-          }}
-          viewport={{ once: true }}
-          className="rounded-xl bg-eucalyptus-950 border-eucalyptus-400 border-[1px] font-semibold"
-          style={{
-            backgroundAttachment: "fixed",
-            backdropFilter: "blur(15px)",
-          }}
-        >
-          <div className="mx-auto my-auto p-10 text-eucalyptus-200 ">
-            <motion.h1
-              variants={primaryVariants}
-              className=" p-2 text-center text-4xl font-semibold"
-            >
-              Sign In
-            </motion.h1>
-            <motion.p
-              variants={primaryVariants}
-              className="p-2 text-center text-xl font-semibold"
-            >
-              Sign in and just Push It!
-            </motion.p>
-
-            <form onSubmit={handleLogin} className="w-full">
-              <motion.div variants={primaryVariants} className="mb-2 w-full">
-                <label
-                  htmlFor="email-input"
-                  className="mb-1 inline-block text-sm font-medium"
-                >
-                  Email<span className="p-1 text-red-500">*</span>
-                </label>
-                <input
-                  id="email-input"
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                  required
-                  value={email}
-                  autoComplete="email"
-                  onChange={(event) => setEmail(event.target.value)}
-                  onFocus={handleFocus}
-                />
-              </motion.div>
-
-              <motion.div variants={primaryVariants} className="mb-2 w-full">
-                <label
-                  htmlFor="password-input"
-                  className="mb-1 inline-block text-sm font-medium"
-                >
-                  Password<span className=" pl-1 text-red-500">*</span>
-                </label>
-                <input
-                  id="password-input"
-                  type="password"
-                  placeholder="Enter your password"
-                  className="w-full rounded border-[1px] px-2.5 py-1.5 focus:outline-eucalyptus-700 bg-eucalyptus-950 border-eucalyptus-400 font-semibold placeholder-eucalyptus-200"
-                  required
-                  value={password}
-                  autoComplete="current-password"
-                  onChange={(event) => setPassword(event.target.value)}
-                  onFocus={handleFocus}
-                />
-              </motion.div>
-              <div className="text-xs text-center flex justify-center gap-1">
-                Don't have an account?
-                <Link
-                  to={"/signup"}
-                  className=" underline hover:text-eucalyptus-800"
-                >
-                  Sign Up!
-                </Link>
-              </div>
-
-              <motion.button
-                variants={primaryVariants}
-                whileTap={{ scale: 0.985 }}
-                type="submit"
-                className=" w-full rounded bg-eucalyptus-800 px-4 py-2 text-center font-semibold text-lg text-eucalyptus-100 transition-colors hover:bg-eucalyptus-900 mt-1"
-              >
-                Sign In
-              </motion.button>
-            </form>
-          </div>
-        </motion.div>
+    <form onSubmit={handleLogin}>
+      <div className="mb-3">
+        <label htmlFor="email-input" className="mb-1.5 block text-zinc-400">
+          Email
+        </label>
+        <input
+          id="email-input"
+          type="email"
+          placeholder="your.email@provider.com"
+          className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-blue-700"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </div>
-    </>
+      <div className="mb-6">
+        <div className="mb-1.5 flex items-end justify-between">
+          <label htmlFor="password-input" className="block text-zinc-400">
+            Password
+          </label>
+          <a href="#" className="text-sm text-blue-400">
+            Forgot?
+          </a>
+        </div>
+        <input
+          id="password-input"
+          type="password"
+          placeholder="••••••••••••"
+          className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-blue-700"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <SplashButton type="submit" className="w-full">
+        {loading ? "Signing in..." : "Sign in"}
+      </SplashButton>
+    </form>
   );
 };
 
-const Logo = () => (
-  <img
-    src="pushitSlogan.png"
-    alt="Push It Logo"
-    className="w-64 mt-5 h-auto md:fixed md:left-5 md:top-5 m-3"
-  />
-);
-
-const primaryVariants = {
-  initial: { y: 55, opacity: 0 },
-  animate: { y: 0, opacity: 1 },
-};
-
-const WatermarkWrapper = () => (
-  <>
-    {[...Array(8)].map((_, i) => (
-      <Watermark key={i} text="Push It! Push It!" reverse={i % 2 === 1} />
-    ))}
-  </>
-);
-
-const Watermark = ({ reverse, text }) => (
-  <div className="flex -translate-y-12 select-none overflow-hidden">
-    <TranslateWrapper reverse={reverse}>
-      <span className="w-fit whitespace-nowrap text-[17vmax] font-black uppercase leading-[0.75] text-eucalyptus-900">
-        {text}
-      </span>
-    </TranslateWrapper>
-    <TranslateWrapper reverse={reverse}>
-      <span className="ml-48 w-fit whitespace-nowrap text-[17vmax] font-black uppercase leading-[0.75] text-eucalyptus-900">
-        {text}
-      </span>
-    </TranslateWrapper>
-  </div>
-);
-
-const TranslateWrapper = ({ children, reverse }) => (
-  <motion.div
-    initial={{ translateX: reverse ? "-100%" : "0%" }}
-    animate={{ translateX: reverse ? "0%" : "-100%" }}
-    transition={{ duration: 75, repeat: Infinity, ease: "linear" }}
-    className="flex"
-  >
-    {children}
-  </motion.div>
-);
-
-const MouseImageTrail = ({
-  children,
-  images,
-  renderImageBuffer,
-  rotationRange,
-}) => {
-  const [scope, animate] = useAnimate();
-  const lastRenderPosition = useRef({ x: 0, y: 0 });
-  const imageRenderCount = useRef(0);
-
-  const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
-    const distance = calculateDistance(
-      clientX,
-      clientY,
-      lastRenderPosition.current.x,
-      lastRenderPosition.current.y
-    );
-    if (distance >= renderImageBuffer) {
-      lastRenderPosition.current.x = clientX;
-      lastRenderPosition.current.y = clientY;
-      renderNextImage();
-    }
-  };
-
-  const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
-
-  const renderNextImage = () => {
-    const imageIndex = imageRenderCount.current % images.length;
-    const selector = `[data-mouse-move-index="${imageIndex}"]`;
-    const el = document.querySelector(selector);
-    el.style.top = `${lastRenderPosition.current.y}px`;
-    el.style.left = `${lastRenderPosition.current.x}px`;
-    el.style.zIndex = imageRenderCount.current.toString();
-    const rotation = Math.random() * rotationRange;
-
-    animate(
-      selector,
-      {
-        opacity: [0, 1],
-        transform: [
-          `translate(-50%, -25%) scale(0.5) rotate(${rotation}deg)`,
-          `translate(-50%, -50%) scale(1) rotate(-${rotation}deg)`,
-        ],
-      },
-      { type: "spring", damping: 15, stiffness: 200 }
-    );
-
-    animate(
-      selector,
-      { opacity: [1, 0] },
-      { ease: "linear", duration: 0.5, delay: 1 }
-    );
-
-    imageRenderCount.current += 1;
-  };
-
+const SplashButton = ({ children, className, ...rest }) => {
   return (
-    <div
-      ref={scope}
-      className="relative overflow-hidden"
-      onMouseMove={handleMouseMove}
+    <button
+      className={twMerge(
+        "rounded-md bg-gradient-to-br from-blue-400 to-blue-700 px-4 py-2 text-lg text-zinc-50 ring-2 ring-blue-500/50 ring-offset-2 ring-offset-zinc-950 transition-all hover:scale-[1.02] hover:ring-transparent active:scale-[0.98] active:ring-blue-500/70",
+        className
+      )}
+      {...rest}
     >
       {children}
-      {images.map((img, index) => (
-        <img
-          className="pointer-events-none absolute left-0 top-0 h-36 w-auto object-cover opacity-0"
-          src={img}
-          alt={`Mouse move image ${index}`}
-          key={index}
-          data-mouse-move-index={index}
-        />
-      ))}
+    </button>
+  );
+};
+
+const BubbleButton = ({ children, className, ...rest }) => {
+  return (
+    <button
+      className={twMerge(
+        `
+        relative z-0 flex items-center gap-2 overflow-hidden whitespace-nowrap rounded-md 
+        border border-zinc-700 bg-gradient-to-br from-zinc-800 to-zinc-950
+        px-3 py-1.5
+        text-zinc-50 transition-all duration-300
+        
+        before:absolute before:inset-0
+        before:-z-10 before:translate-y-[200%]
+        before:scale-[2.5]
+        before:rounded-[100%] before:bg-zinc-100
+        before:transition-transform before:duration-500
+        before:content-[""]
+
+        hover:scale-105 hover:text-zinc-900
+        hover:before:translate-y-[0%]
+        active:scale-100`,
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+};
+
+const CornerGrid = () => {
+  return (
+    <div
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke-width='2' stroke='rgb(30 58 138 / 0.5)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e")`,
+      }}
+      className="absolute right-0 top-0 z-0 size-[50vw]"
+    >
+      <div
+        style={{
+          backgroundImage:
+            "radial-gradient(100% 100% at 100% 0%, rgba(9,9,11,0), rgba(9,9,11,1))",
+        }}
+        className="absolute inset-0"
+      />
     </div>
+  );
+};
+
+const NavLogo = () => {
+  return (
+    <img
+      width="99"
+      height="21"
+      viewBox="0 0 99 21"
+      src="./pushitt.png"
+      alt=""
+    />
   );
 };
 

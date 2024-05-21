@@ -58,7 +58,7 @@ export const Profile = () => {
         theme === "light" ? "bg-white text-black" : "bg-[#16181c] text-white"
       }`}
     >
-      <div className="flex self-end">
+      <div className="md:hidden flex self-end">
         <MobileNav />
       </div>
       <div className="flex flex-col items-center w-full h-full justify-center p-5">
