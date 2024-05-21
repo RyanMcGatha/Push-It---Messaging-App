@@ -51,7 +51,7 @@ const Nav = ({ isOpen, setIsOpen }) => {
         className="flex flex-col gap-4 absolute bottom-8 left-8"
       >
         <NavLink text="Home" href="/home" />
-        <NavLink text="Chats" />
+
         <NavLink text="Profile" href={`/${username}`} />
         <NavLink
           text="Sign Out"

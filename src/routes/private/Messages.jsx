@@ -16,7 +16,14 @@ import MobileNav from "./components/MobileNav";
 
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
-const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
+const Messages = ({
+  selectedChat,
+  selectedChatData,
+  userData,
+  usersData,
+  mobileChatsNav,
+  setMobileChatsNav,
+}) => {
   const color = useMotionValue(COLORS_TOP[0]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
