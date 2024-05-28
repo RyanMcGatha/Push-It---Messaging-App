@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../AuthContext";
 import SignIn from "./public/SignIn";
+import SignUp from "./public/SignUp";
 import PrivateLayout from "../routes/private/PrivateLayout";
 import Home from "../routes/private/Home";
 import ErrorPage from "../routes/public/ErrorPage";
@@ -10,7 +11,6 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import SignUp from "./public/SignUp";
 
 const Routes = () => {
   const { session } = useAuth();

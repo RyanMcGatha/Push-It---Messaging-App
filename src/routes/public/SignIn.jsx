@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { supabase } from "../../../supabaseConfig";
-import { redirect, Link } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+import { useAuth } from "../../AuthContext";
 
 const SignIn = () => {
   return (
@@ -41,9 +40,10 @@ const Heading = () => (
 );
 
 const Form = () => {
-  const [email, setEmail] = useState("");
+  const { login, loading } = useAuth();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -59,37 +59,27 @@ const Form = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    setLoading(true);
+    setError(null);
     try {
-      const { error, data } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        alert(error.message);
-      } else if (data.user) {
-        redirect("/home");
-      }
+      await login(username, password);
     } catch (error) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
+      setError(error.message);
     }
   };
 
   return (
     <form onSubmit={handleLogin}>
       <div className="mb-3">
-        <label htmlFor="email-input" className="mb-1.5 block text-zinc-400">
-          Email
+        <label htmlFor="username-input" className="mb-1.5 block text-zinc-400">
+          Username
         </label>
         <input
-          id="email-input"
-          type="email"
-          placeholder="your.email@provider.com"
+          id="username-input"
+          type="text"
+          placeholder="your username"
           className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-blue-700"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
       </div>
@@ -112,6 +102,7 @@ const Form = () => {
           required
         />
       </div>
+      {error && <p className="text-red-500">{error}</p>}
       <SplashButton type="submit" className="w-full">
         {loading ? "Signing in..." : "Sign in"}
       </SplashButton>
@@ -124,35 +115,6 @@ const SplashButton = ({ children, className, ...rest }) => {
     <button
       className={twMerge(
         "rounded-md bg-gradient-to-br from-blue-400 to-blue-700 px-4 py-2 text-lg text-zinc-50 ring-2 ring-blue-500/50 ring-offset-2 ring-offset-zinc-950 transition-all hover:scale-[1.02] hover:ring-transparent active:scale-[0.98] active:ring-blue-500/70",
-        className
-      )}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-};
-
-const BubbleButton = ({ children, className, ...rest }) => {
-  return (
-    <button
-      className={twMerge(
-        `
-        relative z-0 flex items-center gap-2 overflow-hidden whitespace-nowrap rounded-md 
-        border border-zinc-700 bg-gradient-to-br from-zinc-800 to-zinc-950
-        px-3 py-1.5
-        text-zinc-50 transition-all duration-300
-        
-        before:absolute before:inset-0
-        before:-z-10 before:translate-y-[200%]
-        before:scale-[2.5]
-        before:rounded-[100%] before:bg-zinc-100
-        before:transition-transform before:duration-500
-        before:content-[""]
-
-        hover:scale-105 hover:text-zinc-900
-        hover:before:translate-y-[0%]
-        active:scale-100`,
         className
       )}
       {...rest}
@@ -188,7 +150,7 @@ const NavLogo = () => {
       height="21"
       viewBox="0 0 99 21"
       src="./pushitt.png"
-      alt=""
+      alt="Logo"
     />
   );
 };

@@ -64,8 +64,9 @@ export const SideNav = () => {
         selected={selected === 2}
         id={2}
         onClick={() => {
-          supabase.auth.signOut();
           localStorage.removeItem("selectedNav");
+          localStorage.removeItem("session");
+          window.location.reload();
         }}
       >
         <FaSignOutAlt />

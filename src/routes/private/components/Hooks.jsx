@@ -1,6 +1,9 @@
+import { json } from "react-router-dom";
 import { supabase } from "../../../../supabaseConfig";
 import { apiKey } from "../../../../supabaseConfig";
 import React, { useState, useEffect } from "react";
+
+const token = localStorage.getItem("session");
 
 export const headers = {
   "Content-Type": "application/json",
@@ -12,7 +15,7 @@ export const getUserData = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [full_name, setFull_name] = useState("");
+  const [full_name, setFullName] = useState("");
   const [id, setId] = useState(null);
   const [userData, setUserData] = useState([]);
 
@@ -20,13 +23,22 @@ export const getUserData = () => {
     setLoading(true);
     const getUser = async () => {
       try {
-        const { data, error } = await supabase.auth.getUser();
-        if (error) throw error;
-        setUsername(data.user.user_metadata.username);
-        setFull_name(data.user.user_metadata.full_name);
+        const response = await fetch("http://localhost:3000/current-user", {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token)}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUsername(data.username);
+        setFullName(data.fullname);
       } catch (error) {
         setError(error);
-        console.error("Error fetching signed in user:", error.message);
+        console.error("Error fetching signed-in user:", error.message);
       } finally {
         setLoading(false);
       }
@@ -38,16 +50,17 @@ export const getUserData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://us-east-2.aws.neurelo.com/rest/chats",
-          {
-            method: "GET",
-            headers,
-          }
-        );
-        if (!response.ok) throw new Error("Network response was not ok");
-        const { data } = await response.json();
-        setChats(data.filter((chat) => chat.user_names.includes(username)));
+        const response = await fetch("http://localhost:3000/chats", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token)}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch chats");
+        }
+        const data = await response.json();
+        setChats(data);
       } catch (error) {
         setError(error);
         console.error("There was a problem fetching chats:", error);
@@ -61,32 +74,28 @@ export const getUserData = () => {
 };
 
 export const useUser = () => {
-  const { username } = getUserData();
   const [userData, setUserData] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const filterParams = encodeURIComponent(
-        JSON.stringify({
-          username,
-        })
-      );
-
-      const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
-
       try {
-        const response = await fetch(url, { method: "GET", headers });
+        const response = await fetch("http://localhost:3000/user-profiles", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token)}`,
+          },
+        });
         if (!response.ok) throw new Error("Failed to fetch user profile");
         const data = await response.json();
-        setUserData(data.data);
+        setUserData(data);
       } catch (error) {
         setError(error);
         console.error("Failed to fetch user:", error);
       }
     };
     fetchUser();
-  }, [username]);
+  }, []);
 
   return { userData, error };
 };
@@ -100,16 +109,16 @@ export const addChat = () => {
     is_group: false,
     chat_members: [],
   });
+  console.log(usernames);
 
   const fetchUsernames = async () => {
     try {
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/users?",
-        { headers }
-      );
+      const response = await fetch("http://localhost:3000/usernames", {
+        method: "GET",
+      });
       const data = await response.json();
       if (response.ok) {
-        setUsernames(data.data.map((user) => user.username));
+        setUsernames(data.map((user) => user.username));
       } else {
         throw new Error(data.error || "Failed to fetch usernames");
       }

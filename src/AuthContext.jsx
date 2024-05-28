@@ -1,39 +1,64 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../supabaseConfig";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
+// Create context
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [session, setSession] = useState("loading");
+// Auth provider component
+export const AuthProvider = ({ children }) => {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-    };
-
-    fetchSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    // Check for existing session (e.g., from localStorage)
+    const savedSession = JSON.parse(localStorage.getItem("session"));
+    if (savedSession) {
+      setSession(savedSession);
+    }
+    setLoading(false);
   }, []);
 
+  const login = async (username, password) => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+
+      const data = await response.json();
+      setSession(data.token);
+      localStorage.setItem("session", JSON.stringify(data.token));
+      <Navigate to={"/home"} />;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    setSession(null);
+    localStorage.removeItem("session");
+    <Navigate to={"/"} />;
+  };
+
   return (
-    <AuthContext.Provider value={{ session }}>
-      {session === "loading" ? <div>Loading...</div> : children}
+    <AuthContext.Provider value={{ session, login, logout, loading }}>
+      {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+// useAuth hook to use the auth context
+export const useAuth = () => {
   return useContext(AuthContext);
-}
+};

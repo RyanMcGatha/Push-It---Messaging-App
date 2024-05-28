@@ -1,11 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { supabase } from "../../../supabaseConfig";
-import { Link, Navigate } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "../../AuthContext";
-import { headers } from "../private/components/Hooks";
 
 const SignUp = () => {
   const { session } = useAuth();
@@ -36,7 +33,7 @@ const Heading = () => (
       <h1 className="text-2xl font-semibold">Create your account</h1>
       <p className="text-zinc-400">
         Already have an account?{" "}
-        <Link to="/" className="text-blue-400">
+        <Link to="/signin" className="text-blue-400">
           Sign In!
         </Link>
       </p>
@@ -45,10 +42,12 @@ const Heading = () => (
 );
 
 const Form = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,21 +64,15 @@ const Form = () => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
+    setError(null);
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName, username } },
-      });
-
-      if (error) throw new Error(error.message);
-
       await createUserInNeurelo({ email, username, fullName, password });
-      window.location.reload();
+
+      await login(username, password); // Automatically log in the user after sign-up
     } catch (error) {
-      console.error("Sign up error:", error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -91,49 +84,37 @@ const Form = () => {
     fullName,
     password,
   }) => {
-    try {
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/users/__one",
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            email,
-            username,
-            fullname: fullName,
-            password,
-          }),
-        }
-      );
+    const response = await fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        username,
+        fullname: fullName,
+        password,
+      }),
+    });
 
-      if (!response.ok) throw new Error("Failed to create user in Neurelo");
-
-      await updateUserProfilePic(username);
-    } catch (error) {
-      console.error("Request failed:", error.message);
-    }
+    if (!response.ok) throw new Error("Failed to create user");
   };
 
   const updateUserProfilePic = async (username) => {
-    try {
-      const filterParams = encodeURIComponent(JSON.stringify({ username }));
-      const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
+    const filterParams = encodeURIComponent(JSON.stringify({ username }));
+    const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
 
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers,
-        body: JSON.stringify({
-          profile_pic: `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`,
-        }),
-      });
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        profile_pic: `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`,
+      }),
+    });
 
-      if (!response.ok) throw new Error("Failed to update profile pic");
-
-      const result = await response.json();
-      console.log(result);
-    } catch (error) {
-      console.error("Error updating profile pic:", error.message);
-    }
+    if (!response.ok) throw new Error("Failed to update profile pic");
   };
 
   return (
@@ -194,12 +175,7 @@ const Form = () => {
           required
         />
       </div>
-      <div className="text-lg text-center flex justify-center gap-1 my-1 w-full">
-        Already have an account?
-        <Link to="/" className="underline hover:text-blue-400">
-          Sign In!
-        </Link>
-      </div>
+      {error && <p className="text-red-500">{error}</p>}
       <SplashButton type="submit" className="w-full">
         {loading ? "Signing Up..." : "Sign Up!"}
       </SplashButton>
@@ -247,7 +223,7 @@ const NavLogo = () => {
       height="21"
       viewBox="0 0 99 21"
       src="./pushitt.png"
-      alt=""
+      alt="Logo"
     />
   );
 };
