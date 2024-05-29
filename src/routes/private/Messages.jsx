@@ -28,7 +28,7 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
       repeat: Infinity,
       repeatType: "mirror",
     });
-  }, [messages]);
+  }, []);
   const backgroundImage = useMotionTemplate`radial-gradient(150% 130% at 50% 0%, #1a1a24 60%, ${color})`;
 
   useEffect(() => {

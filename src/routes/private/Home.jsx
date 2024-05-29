@@ -15,7 +15,6 @@ const Home = () => {
   const { userData, username } = useUser();
   const { theme, toggleTheme } = useTheme();
   const { usernames } = addChat();
-  const userCache = {};
   const [mobileChatsNav, setMobileChatsNav] = useState("closed");
 
   const [usersData, setUsersData] = useState([]);
@@ -24,31 +23,24 @@ const Home = () => {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const validUsernames = usernames.filter(
-        (username) => username.trim() !== ""
-      );
-      const usersDataArray = await Promise.all(
-        validUsernames.map(async (username) => {
-          if (userCache[username]) return userCache[username];
-          const filterParams = encodeURIComponent(JSON.stringify({ username }));
-          const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
-          const response = await fetch(url, { method: "GET", headers });
-          if (!response.ok) throw new Error("Failed to fetch user profile");
-          const data = await response.json();
-          userCache[username] = data.data[0];
-          return data.data[0];
-        })
-      );
-      setUsersData(usersDataArray);
+      const response = await fetch("http://localhost:3000/all-profiles", {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      } else {
+        const data = await response.json();
+        setUsersData(data);
+      }
     } catch (error) {
       setError(error);
-      console.error("Failed to fetch users:", error);
+      console.error("There was a problem fetching users:", error);
     }
-  }, [usernames]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, []);
 
   const handleSetSelected = useCallback((tab) => {
     setSelected(tab);

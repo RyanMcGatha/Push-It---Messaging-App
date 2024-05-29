@@ -80,7 +80,7 @@ export const useUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:3000/user-profiles", {
+        const response = await fetch("http://localhost:3000/user-profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${JSON.parse(token)}`,
