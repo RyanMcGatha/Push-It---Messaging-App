@@ -24,7 +24,7 @@ export const ChatCard = ({
 
   const isSelected = id === selectedChatId;
 
-  const handleChatDelete = async (event) => {
+  const handleChatDeletion = async (event) => {
     event.stopPropagation();
 
     const chatId = Number(id);
@@ -52,18 +52,20 @@ export const ChatCard = ({
       className={`flex items-center p-3 mb-1 w-full rounded-md cursor-pointer transition-colors overflow-hidden border ${
         isSelected
           ? theme === "light"
-            ? "bg-gray-200 border-gray-300  "
-            : "bg-dark border-gray-400 "
+            ? "bg-gray-200 border-gray-300"
+            : "bg-dark border-gray-400"
           : theme === "light"
-          ? "hover:bg-gray-200  border-gray-300"
-          : "hover:bg-dark border-gray-700 "
+          ? "hover:bg-gray-200 border-gray-300"
+          : "hover:bg-dark border-gray-700"
       }`}
       onClick={handleChatClick}
     >
       {usernames
         .filter((name) => name.trim() !== "")
         .map((name, index) => {
-          const user = usersData.find((user) => user?.username === name);
+          const user = usersData
+            ? usersData.find((user) => user?.username === name)
+            : null;
           const profilePic = user
             ? user.profile_pic
             : "default-profile-pic-url";
@@ -87,12 +89,9 @@ export const ChatCard = ({
             {title}
           </p>
           <BiTrash
-            onClick={handleChatDelete}
+            onClick={handleChatDeletion}
             className="text-red-500 cursor-pointer"
           />
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-1"></div>
         </div>
       </div>
     </div>

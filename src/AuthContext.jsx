@@ -1,16 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 
-// Create context
 const AuthContext = createContext();
 
-// Auth provider component
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session (e.g., from localStorage)
     const savedSession = JSON.parse(localStorage.getItem("session"));
     if (savedSession) {
       setSession(savedSession);
@@ -36,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       setSession(data.token);
       localStorage.setItem("session", JSON.stringify(data.token));
-      <Navigate to={"/home"} />;
+      window.location.reload();
     } catch (error) {
       console.error("Login error:", error);
       throw error;
@@ -48,17 +44,20 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setSession(null);
     localStorage.removeItem("session");
-    <Navigate to={"/"} />;
+    window.location.reload();
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ session, login, logout, loading }}>
+    <AuthContext.Provider value={{ session, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// useAuth hook to use the auth context
 export const useAuth = () => {
   return useContext(AuthContext);
 };

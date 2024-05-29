@@ -1,85 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { RiFolderAddLine } from "react-icons/ri";
 import ReactSelect from "react-select";
-import { headers } from "./Hooks";
 import { useTheme } from "../../../ThemeContext";
+import { addChat } from "./Hooks";
 
 const AddChat = ({ userData }) => {
-  const [loading, setLoading] = useState(false);
-  const [usernames, setUsernames] = useState([]);
-  const [chatData, setChatData] = useState({
-    chat_name: "",
-    is_group: false,
-    chat_members: [],
-  });
-
   const { theme } = useTheme();
-
-  const username = userData?.[0]?.username;
-
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const response = await fetch(
-          "https://us-east-2.aws.neurelo.com/rest/users?",
-          { headers }
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setUsernames(data.data.map((user) => user.username));
-        } else {
-          throw new Error(data.error || "Failed to fetch usernames");
-        }
-      } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    fetchUsernames();
-  }, []);
-
-  const handleInputChange = (name, value) => {
-    setChatData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCreateChat = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-
-    if (!username) {
-      alert("Username is required to create a chat.");
-      setLoading(false);
-      return;
-    }
-
-    const userNamesArray = [username, ...chatData.chat_members].filter(Boolean);
-
-    const body = JSON.stringify({
-      chat_name: chatData.chat_name,
-      is_group: chatData.is_group === "true",
-      user_names: userNamesArray,
-    });
-
-    try {
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/chats/__one",
-        {
-          method: "POST",
-          headers,
-          body,
-        }
-      );
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to create chat");
-      }
-      window.location.reload();
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    loading,
+    handleCreateChat,
+    chatData,
+    handleInputChange,
+    usernames,
+    username,
+  } = addChat();
 
   return (
     <div className="p-4">

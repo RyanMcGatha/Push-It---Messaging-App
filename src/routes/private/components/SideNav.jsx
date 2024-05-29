@@ -18,13 +18,8 @@ export const SideNav = () => {
   const { userData } = useUser();
 
   useEffect(() => {
-    if (userData.length > 0) {
-      const user = userData.find((user) => user.username === username);
-      if (user) {
-        setProfilePic(user.profile_pic);
-      }
-    }
-  }, [userData, username]);
+    setProfilePic(userData.profile_pic);
+  }, [userData]);
 
   const handleNavClick = (id, url) => {
     setSelected(id);
@@ -56,7 +51,7 @@ export const SideNav = () => {
       <NavItem
         selected={selected === 1}
         id={1}
-        onClick={() => handleNavClick(1, `/${username}`)}
+        onClick={() => handleNavClick(1, `/:${username}`)}
       >
         <CgProfile />
       </NavItem>

@@ -70,7 +70,7 @@ const Form = () => {
     try {
       await createUserInNeurelo({ email, username, fullName, password });
 
-      await login(username, password); // Automatically log in the user after sign-up
+      await login(username, password);
     } catch (error) {
       setError(error.message);
     } finally {

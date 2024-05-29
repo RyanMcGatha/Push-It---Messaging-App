@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../supabaseConfig";
-import { getUserData, headers } from "./components/Hooks";
 import { useTheme } from "../../ThemeContext";
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-
-import { FiArrowRight } from "react-icons/fi";
 import {
   useMotionTemplate,
   useMotionValue,
@@ -13,25 +10,15 @@ import {
   animate,
 } from "framer-motion";
 import MobileNav from "./components/MobileNav";
-
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
-const Messages = ({
-  selectedChat,
-  selectedChatData,
-  userData,
-  usersData,
-  mobileChatsNav,
-  setMobileChatsNav,
-}) => {
+const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
   const color = useMotionValue(COLORS_TOP[0]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const username = userData.username;
+  const full_name = userData.full_name;
   const containerRef = useRef(null);
-
-  const username = userData?.[0]?.username || "defaultUsername";
-  const full_name = userData?.[0]?.full_name || "defaultFullName";
-
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -41,7 +28,7 @@ const Messages = ({
       repeat: Infinity,
       repeatType: "mirror",
     });
-  }, []);
+  }, [messages]);
   const backgroundImage = useMotionTemplate`radial-gradient(150% 130% at 50% 0%, #1a1a24 60%, ${color})`;
 
   useEffect(() => {
@@ -63,26 +50,17 @@ const Messages = ({
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const selectParams = encodeURIComponent(
-        JSON.stringify({
-          chat_id: true,
-          user_name: true,
-          message_text: true,
-          timestamp: true,
-          full_name: true,
-        })
-      );
-      const filterParams = encodeURIComponent(
-        JSON.stringify({ chat_id: Number(selectedChat) })
-      );
-      const url = `https://us-east-2.aws.neurelo.com/rest/messages?select=${selectParams}&filter=${filterParams}`;
+      const selectParams = encodeURIComponent(Number(selectedChat));
+
+      const url = `http://localhost:3000/messages?chat_id=${selectParams}
+      `;
 
       try {
-        const response = await fetch(url, { method: "GET", headers });
+        const response = await fetch(url, { method: "GET" });
         if (!response.ok) throw new Error("Failed to fetch messages");
 
-        const result = await response.json();
-        setMessages(result.data);
+        const data = await response.json();
+        setMessages(data);
       } catch (error) {
         console.error("Fetch messages error:", error.message);
       }
@@ -95,23 +73,19 @@ const Messages = ({
     event.preventDefault();
 
     try {
-      const body = JSON.stringify({
-        chat_id: Number(selectedChat),
-        message_text: message,
-        user_name: username,
-        full_name: full_name,
+      const response = await fetch("http://localhost:3000/add-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chat_id: Number(selectedChat),
+          message_text: message,
+          user_name: username,
+          full_name,
+        }),
       });
 
-      const response = await fetch(
-        "https://us-east-2.aws.neurelo.com/rest/messages/__one",
-        {
-          method: "POST",
-          headers: headers,
-          body: body,
-        }
-      );
-
-      const result = await response.json();
       if (!response.ok) {
         throw new Error(result.error || "Failed to send message");
       }

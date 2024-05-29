@@ -17,7 +17,7 @@ export const Chats = ({
   useEffect(() => {
     if (!loading && !error && chats.length > 0) {
       const initialChat = chats[0];
-      setSelectedChat(initialChat.chat_id); // <-- Ensure setSelectedChat is called correctly
+      setSelectedChat(initialChat.chat_id);
       setSelectedChatData(initialChat);
       setSelectedChatId(initialChat.chat_id);
     }

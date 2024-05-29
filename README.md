@@ -1,6 +1,6 @@
 # Push It - Messaging App
 
-# [Visit Push It!](https://push-it.netlify.app/)
+# [Visit Push It!](https://push-it.dev)
 
 Push It is a messaging application designed to provide a secure and user-friendly platform for both personal and group communications. Built with PostgreSQL, Neurelo's auto-generated APIs, and React.js, this app offers robust functionality for messaging needs.
 

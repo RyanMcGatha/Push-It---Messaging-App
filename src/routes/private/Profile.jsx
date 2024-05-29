@@ -6,14 +6,13 @@ import { useTheme } from "../../ThemeContext";
 import MobileNav from "./components/MobileNav";
 
 export const Profile = () => {
-  const { userData } = useUser();
-  const { username } = useParams();
+  const { userData, username } = useUser();
   const [profilePic, setProfilePic] = useState("");
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    if (userData && userData[0]?.profile_pic) {
-      setProfilePic(userData[0].profile_pic);
+    if (userData?.profile_pic) {
+      setProfilePic(userData.profile_pic);
     }
   }, [userData]);
 
@@ -72,11 +71,7 @@ export const Profile = () => {
               id="profilePicInput"
             />
             <img
-              src={
-                profilePic ||
-                userData[0]?.profile_pic ||
-                "default-profile-pic-url"
-              }
+              src={profilePic || "default-profile-pic-url"}
               alt="profile-pic"
               className="w-40 h-40 rounded-full object-cover"
             />
@@ -86,13 +81,13 @@ export const Profile = () => {
                 theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
               }`}
             >
-              {userData[0]?.profile_pic
+              {userData?.profile_pic
                 ? "Change Profile Picture"
                 : "Upload Profile Picture"}
             </button>
           </div>
-          <h1 className="text-3xl font-bold">{username}</h1>
-          <p className="text-lg">{userData[0]?.full_name}</p>
+          <h1 className="text-3xl font-bold capitalize">{userData.username}</h1>
+          <p className="text-lg">{userData.full_name}</p>
         </div>
         <div className="flex flex-col items-center mt-8">
           <button

@@ -10,15 +10,16 @@ export const tabs = ["Ones", "Groups", "Add Chat"];
 
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
-  const [selectedChat, setSelectedChat] = useState(0); // <-- Ensure this is correctly defined
+  const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatData, setSelectedChatData] = useState({});
-  const { userData } = useUser();
+  const { userData, username } = useUser();
   const { theme, toggleTheme } = useTheme();
   const { usernames } = addChat();
   const userCache = {};
   const [mobileChatsNav, setMobileChatsNav] = useState("closed");
 
   const [usersData, setUsersData] = useState([]);
+
   const [error, setError] = useState(null);
 
   const fetchUsers = useCallback(async () => {
@@ -85,11 +86,12 @@ const Home = () => {
             </div>
             <Chats
               selected={selected}
-              setSelectedChat={setSelectedChat} // <-- Ensure correct prop passing
+              setSelectedChat={setSelectedChat}
               selectedChatData={selectedChatData}
               setSelectedChatData={setSelectedChatData}
               userData={userData}
               usersData={usersData}
+              username={username}
             />
           </div>
         </div>
