@@ -14,6 +14,29 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  const signUp = async (email, username, fullName, password) => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, username, fullname: fullName, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Sign up failed");
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Sign up error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const login = async (username, password) => {
     setLoading(true);
     try {
@@ -52,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ session, login, logout }}>
+    <AuthContext.Provider value={{ session, login, logout, signUp }}>
       {children}
     </AuthContext.Provider>
   );

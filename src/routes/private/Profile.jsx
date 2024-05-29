@@ -10,6 +10,7 @@ export const Profile = () => {
   const [profilePic, setProfilePic] = useState("");
   const { theme, toggleTheme } = useTheme();
   const { username } = useParams();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -18,7 +19,10 @@ export const Profile = () => {
   }, [userData]);
 
   const handleProfilePic = async (event) => {
+    setLoading(true);
+
     const file = event.target.files[0];
+
     if (!file) return;
     const fileName = `${username}/${file.name}`;
 
@@ -49,6 +53,7 @@ export const Profile = () => {
       if (!response.ok) throw new Error("Failed to update profile pic");
 
       setProfilePic(urlData.publicUrl);
+      setLoading(false);
     } catch (error) {
       console.error("Error handling profile picture: ", error.message);
     }
@@ -84,9 +89,7 @@ export const Profile = () => {
                 theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
               }`}
             >
-              {userData?.profile_pic
-                ? "Change Profile Picture"
-                : "Upload Profile Picture"}
+              {loading ? "Uploading..." : "Change Profile Picture"}
             </button>
           </div>
           <h1 className="text-3xl font-bold capitalize">{userData.username}</h1>

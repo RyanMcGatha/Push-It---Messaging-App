@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom"; // Ensure Navigate is imported
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "../../AuthContext";
 
@@ -42,7 +42,7 @@ const Heading = () => (
 );
 
 const Form = () => {
-  const { login } = useAuth();
+  const { login, signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
@@ -67,55 +67,50 @@ const Form = () => {
     setError(null);
     setLoading(true);
 
-    try {
-      await createUserInNeurelo({ email, username, fullName, password });
+    const setProfilePic = async (username) => {
+      const firstLetter = username.charAt(0).toUpperCase();
 
-      await login(username, password);
+      try {
+        const response = await fetch("http://localhost:3000/profile-pic", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            profilePic: `https://ui-avatars.com/api/?name=${firstLetter}&background=random&rounded=true&size=128&bold=true&color=fff`,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Profile picture upload failed");
+        }
+      } catch (error) {
+        console.error("Profile picture upload error:", error);
+        throw error;
+      }
+    };
+
+    try {
+      await signUp(fullName, username, email, password);
+
+      try {
+        await setProfilePic(username);
+      } catch (error) {
+        setError(error.message);
+      }
+
+      try {
+        await login(username, password);
+      } catch (error) {
+        setError(error.message);
+      }
     } catch (error) {
       setError(error.message);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
-
-  const createUserInNeurelo = async ({
-    email,
-    username,
-    fullName,
-    password,
-  }) => {
-    const response = await fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        username,
-        fullname: fullName,
-        password,
-      }),
-    });
-
-    if (!response.ok) throw new Error("Failed to create user");
-  };
-
-  // const updateUserProfilePic = async (username) => {
-  //   const filterParams = encodeURIComponent(JSON.stringify({ username }));
-  //   const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
-
-  //   const response = await fetch(url, {
-  //     method: "PATCH",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       profile_pic: `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`,
-  //     }),
-  //   });
-
-  //   if (!response.ok) throw new Error("Failed to update profile pic");
-  // };
 
   return (
     <form onSubmit={handleSignUp}>
