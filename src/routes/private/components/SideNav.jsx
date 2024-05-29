@@ -51,7 +51,7 @@ export const SideNav = () => {
       <NavItem
         selected={selected === 1}
         id={1}
-        onClick={() => handleNavClick(1, `/:${username}`)}
+        onClick={() => handleNavClick(1, `/${username}`)}
       >
         <CgProfile />
       </NavItem>

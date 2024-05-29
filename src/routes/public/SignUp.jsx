@@ -100,22 +100,22 @@ const Form = () => {
     if (!response.ok) throw new Error("Failed to create user");
   };
 
-  const updateUserProfilePic = async (username) => {
-    const filterParams = encodeURIComponent(JSON.stringify({ username }));
-    const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
+  // const updateUserProfilePic = async (username) => {
+  //   const filterParams = encodeURIComponent(JSON.stringify({ username }));
+  //   const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
 
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        profile_pic: `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`,
-      }),
-    });
+  //   const response = await fetch(url, {
+  //     method: "PATCH",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       profile_pic: `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true&size=128&bold=true&color=fff`,
+  //     }),
+  //   });
 
-    if (!response.ok) throw new Error("Failed to update profile pic");
-  };
+  //   if (!response.ok) throw new Error("Failed to update profile pic");
+  // };
 
   return (
     <form onSubmit={handleSignUp}>

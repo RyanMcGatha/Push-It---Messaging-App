@@ -1,7 +1,6 @@
 import React from "react";
 import { useTheme } from "../../../ThemeContext";
 import { BiTrash } from "react-icons/bi";
-import { headers } from "./Hooks";
 
 export const ChatCard = ({
   id,
@@ -22,28 +21,31 @@ export const ChatCard = ({
     setSelectedChatData({ title, usernames });
   };
 
+  console.log(id);
+
   const isSelected = id === selectedChatId;
 
   const handleChatDeletion = async (event) => {
     event.stopPropagation();
 
-    const chatId = Number(id);
-    const url = `https://us-east-2.aws.neurelo.com/rest/chats/${chatId}`;
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`http://localhost:3000/delete-chat`, {
         method: "DELETE",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ chat_id: Number(id) }),
       });
 
-      if (!response.ok) throw new Error("Failed to delete chat");
+      if (!response.ok) {
+        throw new Error("Failed to delete chat");
+      }
 
-      setChats((prevChats) =>
-        prevChats.filter((chat) => chat.chat_id !== chatId)
-      );
+      setChats((prevChats) => prevChats.filter((chat) => chat.chat_id !== id));
       onChatDelete("Chat deleted successfully");
     } catch (error) {
-      console.error("Error deleting chat: ", error.message);
+      console.error("Failed to delete chat:", error.message);
+      onChatDelete("Failed to delete chat");
     }
   };
 

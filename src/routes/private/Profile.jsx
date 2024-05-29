@@ -6,13 +6,14 @@ import { useTheme } from "../../ThemeContext";
 import MobileNav from "./components/MobileNav";
 
 export const Profile = () => {
-  const { userData, username } = useUser();
+  const { userData } = useUser();
   const [profilePic, setProfilePic] = useState("");
   const { theme, toggleTheme } = useTheme();
+  const { username } = useParams();
 
   useEffect(() => {
-    if (userData?.profile_pic) {
-      setProfilePic(userData.profile_pic);
+    if (userData) {
+      setProfilePic(userData?.profile_pic);
     }
   }, [userData]);
 
@@ -34,13 +35,15 @@ export const Profile = () => {
 
       if (urlError) throw urlError;
 
-      const filterParams = encodeURIComponent(JSON.stringify({ username }));
-      const url = `https://us-east-2.aws.neurelo.com/rest/user_profiles?filter=${filterParams}`;
+      const url = `http://localhost:3000/profile-pic`;
 
       const response = await fetch(url, {
         method: "PATCH",
-        headers,
-        body: JSON.stringify({ profile_pic: urlData.publicUrl }),
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          username,
+          profilePic: urlData.publicUrl,
+        }),
       });
 
       if (!response.ok) throw new Error("Failed to update profile pic");
