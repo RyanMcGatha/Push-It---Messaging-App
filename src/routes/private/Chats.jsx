@@ -30,7 +30,7 @@ export const Chats = ({
       case "Groups":
         return chats.filter((chat) => chat.is_group);
       default:
-        return [];
+        return chats;
     }
   }, [selected, chats]);
 
@@ -88,6 +88,8 @@ export const Chats = ({
       )}
       {selected === "Add Chat" ? (
         <AddChat userData={userData} />
+      ) : filteredChats.length === 0 ? (
+        <p>No chats created.</p>
       ) : (
         filteredChats.map((chat) => (
           <ChatCard

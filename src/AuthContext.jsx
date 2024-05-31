@@ -17,30 +17,65 @@ export const AuthProvider = ({ children }) => {
   const signUp = async (email, username, fullName, password) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, username, fullname: fullName, password }),
-      });
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            username,
+            fullname: fullName,
+            password,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Sign up failed");
       }
+
       const data = await response.json();
     } catch (error) {
-      console.error("Sign up error:", error);
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
+  const resendVerificationEmail = async () => {
+    try {
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/resend-verification",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.token}`,
+          },
+          body: JSON.stringify({ username: session.user.username }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to resend verification email");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      alert(data.message);
+    } catch (error) {
+      console.error("Error resending verification email:", error);
+      alert("Error resending verification email. Please try again later.");
+    }
+  };
+
   const login = async (username, password) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("https://push-it-backend.vercel.app/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,14 +88,20 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      setSession(data.token);
-      localStorage.setItem("session", JSON.stringify(data.token));
+      setSession(data);
+      localStorage.setItem("session", JSON.stringify(data));
       window.location.reload();
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const reloadSession = async () => {
+    const savedSession = JSON.parse(localStorage.getItem("session"));
+    if (savedSession) {
+      setSession(savedSession);
     }
   };
 
@@ -70,12 +111,46 @@ export const AuthProvider = ({ children }) => {
     window.location.reload();
   };
 
+  const verifyEmail = async (token) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://push-it-backend.vercel.app/verify-email?token=${token}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Email verification failed");
+      }
+
+      const updatedSession = await response.json();
+      setSession(updatedSession);
+      localStorage.setItem("session", JSON.stringify(updatedSession));
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ session, login, logout, signUp }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        resendVerificationEmail,
+        login,
+        logout,
+        signUp,
+        verifyEmail,
+        reloadSession,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -52,7 +52,7 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
     const fetchMessages = async () => {
       const selectParams = encodeURIComponent(Number(selectedChat));
 
-      const url = `http://localhost:3000/messages?chat_id=${selectParams}
+      const url = `https://push-it-backend.vercel.app/messages?chat_id=${selectParams}
       `;
 
       try {
@@ -73,18 +73,21 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/add-message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chat_id: Number(selectedChat),
-          message_text: message,
-          user_name: username,
-          full_name,
-        }),
-      });
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/add-message",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: Number(selectedChat),
+            message_text: message,
+            user_name: username,
+            full_name,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to send message");

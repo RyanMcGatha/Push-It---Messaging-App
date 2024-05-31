@@ -18,14 +18,18 @@ const Home = () => {
   const [mobileChatsNav, setMobileChatsNav] = useState("closed");
 
   const [usersData, setUsersData] = useState([]);
-
   const [error, setError] = useState(null);
+
+  const [verificationMessage, setVerificationMessage] = useState("");
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:3000/all-profiles", {
-        method: "GET",
-      });
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/all-profiles",
+        {
+          method: "GET",
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       } else {
@@ -40,7 +44,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleSetSelected = useCallback((tab) => {
     setSelected(tab);
@@ -61,11 +65,6 @@ const Home = () => {
           className={`hidden md:flex flex-col w-full md:w-25p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
         >
           <div className="flex flex-col items-center w-full p-5">
-            <input
-              type="text"
-              placeholder="Search..."
-              className={`w-full p-3 rounded-full ${inputClasses} focus:outline-none`}
-            />
             <div className="flex justify-around w-full mt-4 mb-4">
               {tabs.map((tab) => (
                 <Chip
@@ -132,6 +131,11 @@ const Home = () => {
           </motion.div>
         </div>
       </div>
+      {verificationMessage && (
+        <div className="fixed bottom-0 left-0 right-0 bg-green-500 text-white p-4 text-center">
+          {verificationMessage}
+        </div>
+      )}
     </>
   );
 };

@@ -21,21 +21,22 @@ export const ChatCard = ({
     setSelectedChatData({ title, usernames });
   };
 
-  console.log(id);
-
   const isSelected = id === selectedChatId;
 
   const handleChatDeletion = async (event) => {
     event.stopPropagation();
 
     try {
-      const response = await fetch(`http://localhost:3000/delete-chat`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chat_id: Number(id) }),
-      });
+      const response = await fetch(
+        `https://push-it-backend.vercel.app/delete-chat`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ chat_id: Number(id) }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete chat");

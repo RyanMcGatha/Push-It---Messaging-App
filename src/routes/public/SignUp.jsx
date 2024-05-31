@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link, Navigate } from "react-router-dom"; // Ensure Navigate is imported
+import { Link, Navigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "../../AuthContext";
 
@@ -67,20 +67,25 @@ const Form = () => {
     setError(null);
     setLoading(true);
 
+    console.log("Signing up with:", { email, username, fullName, password });
+
     const setProfilePic = async (username) => {
       const firstLetter = username.charAt(0).toUpperCase();
 
       try {
-        const response = await fetch("http://localhost:3000/profile-pic", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            profilePic: `https://ui-avatars.com/api/?name=${firstLetter}&background=random&rounded=true&size=128&bold=true&color=fff`,
-          }),
-        });
+        const response = await fetch(
+          "https://push-it-backend.vercel.app/profile-pic",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username,
+              profilePic: `https://ui-avatars.com/api/?name=${firstLetter}&background=random&rounded=true&size=128&bold=true&color=fff`,
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Profile picture upload failed");
@@ -92,7 +97,7 @@ const Form = () => {
     };
 
     try {
-      await signUp(fullName, username, email, password);
+      await signUp(email, username, fullName, password);
 
       try {
         await setProfilePic(username);

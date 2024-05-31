@@ -3,7 +3,7 @@ import { supabase } from "../../../../supabaseConfig";
 import { apiKey } from "../../../../supabaseConfig";
 import React, { useState, useEffect } from "react";
 
-const token = localStorage.getItem("session");
+import { useAuth } from "../../../AuthContext";
 
 export const headers = {
   "Content-Type": "application/json",
@@ -12,21 +12,25 @@ export const headers = {
 
 export const getUserData = () => {
   const [chats, setChats] = useState([]);
+  const { session } = useAuth();
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [full_name, setFullName] = useState("");
-  const [id, setId] = useState(null);
+  const [is_verified, setIsVerified] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     const getUser = async () => {
       try {
-        const response = await fetch("http://localhost:3000/current-user", {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token)}`,
-          },
-        });
+        const response = await fetch(
+          "https://push-it-backend.vercel.app/current-user",
+          {
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,6 +39,7 @@ export const getUserData = () => {
         const data = await response.json();
         setUsername(data.username);
         setFullName(data.fullname);
+        setIsVerified(data.is_verified);
       } catch (error) {
         setError(error);
         console.error("Error fetching signed-in user:", error.message);
@@ -44,17 +49,20 @@ export const getUserData = () => {
     };
 
     getUser();
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/chats", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token)}`,
-          },
-        });
+        const response = await fetch(
+          "https://push-it-backend.vercel.app/chats",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch chats");
         }
@@ -69,23 +77,27 @@ export const getUserData = () => {
     fetchData();
   }, [username, full_name]);
 
-  return { chats, username, loading, error, full_name, setChats };
+  return { chats, username, loading, error, full_name, setChats, is_verified };
 };
 
 export const useUser = () => {
   const [userData, setUserData] = useState([]);
   const [error, setError] = useState(null);
   const { username } = getUserData();
+  const { session } = useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:3000/user-profile", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token)}`,
-          },
-        });
+        const response = await fetch(
+          "https://push-it-backend.vercel.app/user-profile",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch user profile");
         const data = await response.json();
         setUserData(data);
@@ -104,6 +116,8 @@ export const addChat = () => {
   const [loading, setLoading] = useState(false);
   const [usernames, setUsernames] = useState([]);
   const { username } = getUserData();
+  const { session } = useAuth();
+
   const [chatData, setChatData] = useState({
     chat_name: "",
     is_group: false,
@@ -112,9 +126,12 @@ export const addChat = () => {
 
   const fetchUsernames = async () => {
     try {
-      const response = await fetch("http://localhost:3000/usernames", {
-        method: "GET",
-      });
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/usernames",
+        {
+          method: "GET",
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setUsernames(data.map((user) => user.username));
@@ -145,13 +162,16 @@ export const addChat = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:3000/add-chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
+      const response = await fetch(
+        "https://push-it-backend.vercel.app/add-chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        }
+      );
       const result = await response.json();
       if (!response.ok) {
         throw new Error(result.error || "Failed to create chat");
@@ -160,6 +180,7 @@ export const addChat = () => {
       console.log(error.message);
     } finally {
       setLoading(false);
+      window.location.reload();
     }
   };
 

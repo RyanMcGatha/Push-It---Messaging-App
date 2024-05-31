@@ -39,7 +39,7 @@ export const Profile = () => {
 
       if (urlError) throw urlError;
 
-      const url = `http://localhost:3000/profile-pic`;
+      const url = `https://push-it-backend.vercel.app/profile-pic`;
 
       const response = await fetch(url, {
         method: "PATCH",
