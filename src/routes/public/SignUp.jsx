@@ -70,7 +70,7 @@ const Form = () => {
     console.log("Signing up with:", { email, username, fullName, password });
 
     const setProfilePic = async (username) => {
-      const firstLetter = username.charAt(0).toUpperCase();
+      const firstLetter = await username.charAt(0).toUpperCase();
 
       try {
         const response = await fetch(
