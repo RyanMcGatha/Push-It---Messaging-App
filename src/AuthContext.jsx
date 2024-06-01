@@ -65,7 +65,6 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
       console.log(data.message);
-      alert(data.message);
     } catch (error) {
       console.error("Error resending verification email:", error);
       alert("Error resending verification email. Please try again later.");
