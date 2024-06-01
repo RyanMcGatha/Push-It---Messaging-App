@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../../AuthContext";
+// import { useAuth } from "../../AuthContext";
 import { SideNav } from "./components/SideNav";
-import VerificationModal from "./components/VerificationModal";
+// import VerificationModal from "./components/VerificationModal";
 
 const PrivateLayout = () => {
-  const { session } = useAuth();
-  const [isModalOpen, setModalOpen] = useState(false);
+  // const { session } = useAuth();
+  // const [isModalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (session && !session.user.is_verified) {
-      setModalOpen(true);
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session && !session.user.is_verified) {
+  //     setModalOpen(true);
+  //   }
+  // }, [session]);
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
+  // const handleCloseModal = () => {
+  //   setModalOpen(false);
+  // };
 
   return (
     <>
@@ -28,7 +28,7 @@ const PrivateLayout = () => {
           <Outlet />
         </div>
       </div>
-      <VerificationModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* <VerificationModal isOpen={isModalOpen} onClose={handleCloseModal} /> */}
     </>
   );
 };
