@@ -63,6 +63,17 @@ const VerificationModal = ({ isOpen, onClose }) => {
           Okay
         </button>
         <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem("selectedNav");
+            localStorage.removeItem("session");
+            window.location.reload();
+          }}
+          className="bg-red-500 text-white px-4 py-2 rounded ml-4"
+        >
+          Sign Out
+        </button>
+        <button
           className="bg-green-500 text-white px-4 py-2 rounded ml-4"
           onClick={handleResendEmail}
           disabled={isDisabled}

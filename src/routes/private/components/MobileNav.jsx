@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { useTheme } from "../../../ThemeContext";
 import { supabase } from "../../../../supabaseConfig";
 import { getUserData } from "./Hooks";
+import { useAuth } from "../../../AuthContext";
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <div>
@@ -56,7 +58,9 @@ const Nav = ({ isOpen, setIsOpen }) => {
         <NavLink
           text="Sign Out"
           onClick={() => {
-            supabase.auth.signOut();
+            localStorage.removeItem("selectedNav");
+            localStorage.removeItem("session");
+            window.location.reload();
           }}
         />
       </motion.div>

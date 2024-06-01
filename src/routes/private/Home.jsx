@@ -11,6 +11,7 @@ export const tabs = ["Ones", "Groups", "Add Chat"];
 
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
+  const [mobileAddChat, setMobileAddChat] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatData, setSelectedChatData] = useState({});
   const { userData, username } = useUser();
@@ -131,12 +132,8 @@ const Home = () => {
                 usersData={usersData}
               />
               <button
-                onClick={() => setSelected("Add Chat")}
-                className={`flex items-center p-3 mb-1 w-full rounded-md cursor-pointer transition-colors overflow-hidden border ${
-                  theme === "light"
-                    ? "bg-gray-200 border-gray-300"
-                    : "bg-dark border-gray-400"
-                }`}
+                onClick={() => setMobileAddChat(true)}
+                className="w-full p-3 rounded-md text-xl bg-blue-500 text-white hover:bg-opacity-80 transition-opacity"
               >
                 Add Chat
               </button>
@@ -144,6 +141,19 @@ const Home = () => {
           </motion.div>
         </div>
       </div>
+      {mobileAddChat && (
+        <div className="modal" onClick={() => setMobileAddChat(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <AddChat />
+            <button
+              onClick={() => setMobileAddChat(false)}
+              className="mt-4 w-full p-2 rounded-md text-xl bg-red-500 text-white hover:bg-opacity-80 transition-opacity"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       {verificationMessage && (
         <div className="fixed bottom-0 left-0 right-0 bg-green-500 text-white p-4 text-center">
           {verificationMessage}
