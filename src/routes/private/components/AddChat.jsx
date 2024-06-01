@@ -55,7 +55,7 @@ const ChatModal = ({
 
   return (
     <div
-      className={`p-4 rounded-md shadow-md ${
+      className={`p-4 rounded-md shadow-md w-full ${
         theme === "light" ? "bg-white" : "bg-dark"
       }`}
     >

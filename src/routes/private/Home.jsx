@@ -5,6 +5,7 @@ import { useUser, addChat, headers } from "./components/Hooks";
 import { useTheme } from "../../ThemeContext";
 import { motion } from "framer-motion";
 import { FiChevronDown } from "react-icons/fi";
+import AddChat from "./components/AddChat";
 
 export const tabs = ["Ones", "Groups", "Add Chat"];
 
@@ -116,8 +117,10 @@ const Home = () => {
             <motion.div
               initial={wrapperVariants.closed}
               variants={wrapperVariants}
-              style={{ originY: "top", translateX: "-100%" }}
-              className="flex flex-col gap-2 p-2 rounded-lg bg-white shadow-xl absolute top-[120%] left-[50%] w-60 overflow-hidden"
+              style={{ originY: "top", translateX: "-50%" }}
+              className={`absolute top-10 right-0 w-64 p-4  shadow-md rounded-md z-20 overflow-hidden ${
+                mobileChatsNav === "open" ? "visible" : "hidden"
+              } ${theme === "light" ? "bg-gray-100" : "bg-dark-lighter"}`}
             >
               <Chats
                 selected={selected}
@@ -127,6 +130,16 @@ const Home = () => {
                 userData={userData}
                 usersData={usersData}
               />
+              <button
+                onClick={() => setSelected("Add Chat")}
+                className={`flex items-center p-3 mb-1 w-full rounded-md cursor-pointer transition-colors overflow-hidden border ${
+                  theme === "light"
+                    ? "bg-gray-200 border-gray-300"
+                    : "bg-dark border-gray-400"
+                }`}
+              >
+                Add Chat
+              </button>
             </motion.div>
           </motion.div>
         </div>
