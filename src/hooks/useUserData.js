@@ -10,6 +10,12 @@ export const useUserData = () => {
   const [error, setError] = useState(null);
   const [fullName, setFullName] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    if (status !== null) {
+    }
+  }, [status]);
 
   const fetchUserData = useCallback(async () => {
     setLoading(true);
@@ -22,11 +28,11 @@ export const useUserData = () => {
           },
         }
       );
+      setStatus(response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
       setUsername(data.username);
       setFullName(data.fullname);
@@ -40,8 +46,10 @@ export const useUserData = () => {
   }, [session]);
 
   useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+    if (session?.token) {
+      fetchUserData();
+    }
+  }, [fetchUserData, session]);
 
   const fetchChats = useCallback(async () => {
     try {
@@ -51,8 +59,9 @@ export const useUserData = () => {
           Authorization: `Bearer ${session.token}`,
         },
       });
+
       if (!response.ok) {
-        throw new Error("Failed to fetch chats");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       setChats(data);
@@ -63,8 +72,19 @@ export const useUserData = () => {
   }, [session]);
 
   useEffect(() => {
-    fetchChats();
-  }, [fetchChats]);
+    if (session?.token) {
+      fetchChats();
+    }
+  }, [fetchChats, session]);
 
-  return { chats, username, loading, error, fullName, setChats, isVerified };
+  return {
+    chats,
+    username,
+    loading,
+    error,
+    fullName,
+    setChats,
+    isVerified,
+    status,
+  };
 };
