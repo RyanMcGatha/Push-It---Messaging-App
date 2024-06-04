@@ -9,7 +9,7 @@ export const useUserData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fullName, setFullName] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
+  const [is_verified, setIsVerified] = useState(false);
   const [status, setStatus] = useState(null);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export const useUserData = () => {
     error,
     fullName,
     setChats,
-    isVerified,
+    is_verified,
     status,
   };
 };
