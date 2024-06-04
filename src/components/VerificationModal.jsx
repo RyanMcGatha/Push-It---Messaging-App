@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useUserData } from "../hooks/useUserData";
 
-const VerificationModal = ({ isOpen, onClose }) => {
+export const VerificationModal = ({ isOpen, onClose }) => {
   const { resendVerificationEmail, session } = useAuth();
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -60,7 +60,7 @@ const VerificationModal = ({ isOpen, onClose }) => {
           onClick={handleOkay}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Okay
+          Check Verification
         </button>
         <button
           type="button"
@@ -74,7 +74,7 @@ const VerificationModal = ({ isOpen, onClose }) => {
           Sign Out
         </button>
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded ml-4"
+          className="bg-green-500 text-white px-1 py-2 rounded mt-2"
           onClick={handleResendEmail}
           disabled={isDisabled}
         >
@@ -84,5 +84,3 @@ const VerificationModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
-export default VerificationModal;

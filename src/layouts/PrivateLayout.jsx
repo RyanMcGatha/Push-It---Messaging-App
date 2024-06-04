@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { SideNav } from "../components/SideNav";
-import VerificationModal from "../components/VerificationModal";
+import { VerificationModal } from "../components/VerificationModal";
 
 const PrivateLayout = () => {
   const { session } = useAuth();
