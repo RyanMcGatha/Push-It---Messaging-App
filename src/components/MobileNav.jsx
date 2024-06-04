@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { FiMenu, FiX, FiArrowRight } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { useTheme } from "../../../ThemeContext";
-import { supabase } from "../../../../supabaseConfig";
-import { getUserData } from "./Hooks";
-import { useAuth } from "../../../AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useUserData } from "../hooks/useUserData";
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { logout } = useAuth();
 
   return (
     <div>
@@ -29,7 +26,7 @@ const MobileNav = () => {
 
 const Nav = ({ isOpen, setIsOpen }) => {
   const { theme, toggleTheme } = useTheme();
-  const { username } = getUserData();
+  const { username } = useUserData();
 
   return (
     <motion.nav

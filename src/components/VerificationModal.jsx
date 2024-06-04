@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../AuthContext";
-import { useTheme } from "../../../ThemeContext";
-import { getUserData } from "./Hooks";
+import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useUserData } from "../hooks/useUserData";
 
 const VerificationModal = ({ isOpen, onClose }) => {
-  const { resendVerificationEmail, reloadSession, session } = useAuth();
+  const { resendVerificationEmail, session } = useAuth();
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const timeoutDuration = 60;
-  const { is_verified } = getUserData();
+  const { is_verified } = useUserData();
 
   const handleResendEmail = async () => {
     setIsDisabled(true);

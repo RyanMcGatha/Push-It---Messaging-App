@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useUser, headers } from "./components/Hooks";
+import React, { useState, useEffect, useRef } from "react";
+import { useUserProfile } from "../hooks/useUserProfile";
 import { useParams } from "react-router-dom";
-import { supabase } from "../../../supabaseConfig";
-import { useTheme } from "../../ThemeContext";
-import MobileNav from "./components/MobileNav";
+import { supabase } from "../../supabaseConfig";
+import { useTheme } from "../contexts/ThemeContext";
+import MobileNav from "../components/MobileNav";
 
 export const Profile = () => {
-  const { userData } = useUser();
+  const { userData } = useUserProfile();
   const [profilePic, setProfilePic] = useState("");
   const { theme, toggleTheme } = useTheme();
   const { username } = useParams();
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (userData) {
@@ -23,7 +24,11 @@ export const Profile = () => {
 
     const file = event.target.files[0];
 
-    if (!file) return;
+    if (!file) {
+      setLoading(false);
+      return;
+    }
+
     const fileName = `${username}/${file.name}`;
 
     try {
@@ -53,9 +58,10 @@ export const Profile = () => {
       if (!response.ok) throw new Error("Failed to update profile pic");
 
       setProfilePic(urlData.publicUrl);
-      setLoading(false);
     } catch (error) {
       console.error("Error handling profile picture: ", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,7 +82,7 @@ export const Profile = () => {
               accept="image/*"
               onChange={handleProfilePic}
               className="hidden"
-              id="profilePicInput"
+              ref={fileInputRef}
             />
             <img
               src={profilePic || "default-profile-pic-url"}
@@ -84,7 +90,7 @@ export const Profile = () => {
               className="w-40 h-40 rounded-full object-cover"
             />
             <button
-              onClick={() => document.getElementById("profilePicInput").click()}
+              onClick={() => fileInputRef.current.click()}
               className={`bottom-0 right-0 p-2 rounded-lg ${
                 theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
               }`}

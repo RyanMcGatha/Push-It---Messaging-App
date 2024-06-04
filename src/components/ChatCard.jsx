@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "../../../ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { BiTrash } from "react-icons/bi";
 
 export const ChatCard = ({
@@ -10,7 +10,6 @@ export const ChatCard = ({
   setSelectedChatData,
   usersData,
   selectedChatId,
-  chats,
   setChats,
   onChatDelete,
 }) => {

@@ -1,16 +1,9 @@
-import {
-  FiEdit,
-  FiChevronDown,
-  FiTrash,
-  FiShare,
-  FiPlusSquare,
-} from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { MotionConfig } from "framer-motion";
-import OnesCard from "./OnesCard";
 
-const ChatSettings = ({ id, chats, onDelete }) => {
+const ChatSettings = ({ id, onDelete }) => {
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {

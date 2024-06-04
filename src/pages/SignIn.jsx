@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import { useAuth } from "../../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const SignIn = () => {
   return (

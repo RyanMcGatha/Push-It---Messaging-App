@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { getUserData } from "./components/Hooks";
-import { ChatCard } from "./components/ChatCard.jsx";
-import AddChat from "./components/AddChat.jsx";
+import { useUserData } from "../hooks/useUserData.js";
+import { ChatCard } from "../components/ChatCard.jsx";
+import AddChat from "../components/AddChat.jsx";
 
 export const Chats = ({
   selected,
@@ -10,7 +10,7 @@ export const Chats = ({
   userData,
   usersData,
 }) => {
-  const { chats, loading, error, setChats } = getUserData();
+  const { chats, loading, error, setChats } = useUserData();
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [notification, setNotification] = useState("");
 

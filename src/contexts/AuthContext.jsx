@@ -97,13 +97,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const reloadSession = async () => {
-    const savedSession = JSON.parse(localStorage.getItem("session"));
-    if (savedSession) {
-      setSession(savedSession);
-    }
-  };
-
   const logout = () => {
     setSession(null);
     localStorage.removeItem("session");
@@ -147,7 +140,6 @@ export const AuthProvider = ({ children }) => {
         logout,
         signUp,
         verifyEmail,
-        reloadSession,
       }}
     >
       {children}

@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { HiHome } from "react-icons/hi";
 import { FaSignOutAlt } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-import { useTheme } from "../../../ThemeContext";
-import { getUserData, useUser } from "./Hooks";
-import { supabase } from "../../../../supabaseConfig";
+import { useTheme } from "../contexts/ThemeContext";
+import { useUserData } from "../hooks/useUserData";
+import { useUserProfile } from "../hooks/useUserProfile";
 
 export const SideNav = () => {
   const [selected, setSelected] = useState(() => {
@@ -14,8 +14,8 @@ export const SideNav = () => {
   });
   const [profilePic, setProfilePic] = useState(null);
   const { theme } = useTheme();
-  const { username } = getUserData();
-  const { userData } = useUser();
+  const { username } = useUserData();
+  const { userData } = useUserProfile();
 
   useEffect(() => {
     setProfilePic(userData.profile_pic);

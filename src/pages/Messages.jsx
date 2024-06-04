@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { supabase } from "../../../supabaseConfig";
-import { useTheme } from "../../ThemeContext";
+import { supabase } from "../../supabaseConfig";
+import { useTheme } from "../contexts/ThemeContext";
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -9,7 +9,7 @@ import {
   motion,
   animate,
 } from "framer-motion";
-import MobileNav from "./components/MobileNav";
+import MobileNav from "../components/MobileNav";
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 
 const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
@@ -19,7 +19,7 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
   const username = userData.username;
   const full_name = userData.full_name;
   const containerRef = useRef(null);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   useEffect(() => {
     animate(color, COLORS_TOP, {

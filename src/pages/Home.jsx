@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Chats } from "./Chats";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Chats } from "../components/Chats";
 import Messages from "./Messages";
-import { useUser, addChat, headers } from "./components/Hooks";
-import { useTheme } from "../../ThemeContext";
+import { useUserProfile } from "../hooks/useUserProfile";
+import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
 import { FiChevronDown } from "react-icons/fi";
-import AddChat from "./components/AddChat";
+import AddChat from "../components/AddChat";
 
 export const tabs = ["Ones", "Groups", "Add Chat"];
 
@@ -14,14 +14,12 @@ const Home = () => {
   const [mobileAddChat, setMobileAddChat] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatData, setSelectedChatData] = useState({});
-  const { userData, username } = useUser();
-  const { theme, toggleTheme } = useTheme();
-  const { usernames } = addChat();
+  const { userData, username } = useUserProfile();
+  const { theme } = useTheme();
   const [mobileChatsNav, setMobileChatsNav] = useState("closed");
 
   const [usersData, setUsersData] = useState([]);
   const [error, setError] = useState(null);
-
   const [verificationMessage, setVerificationMessage] = useState("");
 
   const fetchUsers = useCallback(async () => {
@@ -34,10 +32,9 @@ const Home = () => {
       );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
-      } else {
-        const data = await response.json();
-        setUsersData(data);
       }
+      const data = await response.json();
+      setUsersData(data);
     } catch (error) {
       setError(error);
       console.error("There was a problem fetching users:", error);
@@ -52,13 +49,23 @@ const Home = () => {
     setSelected(tab);
   }, []);
 
-  const themeClasses =
-    theme === "light" ? "bg-white text-black" : "bg-dark text-white";
-  const sidebarClasses = theme === "light" ? "bg-gray-100" : "bg-dark-lighter";
-  const inputClasses =
-    theme === "light"
-      ? "bg-gray-200 text-black placeholder-gray-600"
-      : "bg-gray-700 text-white placeholder-gray-400";
+  const themeClasses = useMemo(
+    () => (theme === "light" ? "bg-white text-black" : "bg-dark text-white"),
+    [theme]
+  );
+
+  const sidebarClasses = useMemo(
+    () => (theme === "light" ? "bg-gray-100" : "bg-dark-lighter"),
+    [theme]
+  );
+
+  const inputClasses = useMemo(
+    () =>
+      theme === "light"
+        ? "bg-gray-200 text-black placeholder-gray-600"
+        : "bg-gray-700 text-white placeholder-gray-400",
+    [theme]
+  );
 
   return (
     <>
@@ -119,7 +126,7 @@ const Home = () => {
               initial={wrapperVariants.closed}
               variants={wrapperVariants}
               style={{ originY: "top", translateX: "-50%" }}
-              className={`absolute top-10 right-0 w-64 p-4  shadow-md rounded-md z-20 overflow-hidden ${
+              className={`absolute top-10 right-0 w-64 p-4 shadow-md rounded-md z-20 overflow-hidden ${
                 mobileChatsNav === "open" ? "visible" : "hidden"
               } ${theme === "light" ? "bg-gray-100" : "bg-dark-lighter"}`}
             >
@@ -169,9 +176,7 @@ export const Chip = React.memo(({ text, selected, setSelected }) => {
   const { theme } = useTheme();
 
   const chipClasses = selected
-    ? theme === "light"
-      ? "text-white bg-gray-700"
-      : "text-white bg-gray-700"
+    ? "text-white bg-gray-700"
     : theme === "light"
     ? "text-gray-600 hover:text-gray-800 hover:bg-gray-300"
     : "text-gray-400 hover:text-gray-200 hover:bg-gray-600";

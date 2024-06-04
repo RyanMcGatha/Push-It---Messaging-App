@@ -1,19 +1,14 @@
-import React from "react";
-import { RiFolderAddLine } from "react-icons/ri";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ReactSelect from "react-select";
-import { useTheme } from "../../../ThemeContext";
-import { addChat } from "./Hooks";
+import { useTheme } from "../contexts/ThemeContext";
+import { useUserData } from "../hooks/useUserData";
+import { useAddChat } from "../hooks/useAddChat";
 
-const AddChat = ({ userData }) => {
+const AddChat = () => {
   const { theme } = useTheme();
-  const {
-    loading,
-    handleCreateChat,
-    chatData,
-    handleInputChange,
-    usernames,
-    username,
-  } = addChat();
+  const { username } = useUserData();
+  const { loading, usernames, chatData, handleInputChange, handleCreateChat } =
+    useAddChat(username);
 
   return (
     <div className="p-4">
@@ -37,21 +32,33 @@ const ChatModal = ({
   usernames,
   theme,
 }) => {
-  const options = usernames.map((username) => ({
-    value: username,
-    label: username,
-  }));
-  const selectedOptions = chatData.chat_members.map((member) => ({
-    value: member,
-    label: member,
-  }));
+  const options = useMemo(
+    () =>
+      usernames.map((username) => ({
+        value: username,
+        label: username,
+      })),
+    [usernames]
+  );
 
-  const onMembersChange = (selectedOptions) => {
-    const members = selectedOptions
-      ? selectedOptions.map((option) => option.value)
-      : [];
-    handleInputChange("chat_members", members);
-  };
+  const selectedOptions = useMemo(
+    () =>
+      chatData.chat_members.map((member) => ({
+        value: member,
+        label: member,
+      })),
+    [chatData.chat_members]
+  );
+
+  const onMembersChange = useCallback(
+    (selectedOptions) => {
+      const members = selectedOptions
+        ? selectedOptions.map((option) => option.value)
+        : [];
+      handleInputChange("chat_members", members);
+    },
+    [handleInputChange]
+  );
 
   return (
     <div
@@ -140,9 +147,9 @@ const ChatModal = ({
             }),
             multiValueRemove: (base) => ({
               ...base,
-              color: theme === "light" ? "#e3342f" : "#e3342f",
+              color: "#e3342f",
               ":hover": {
-                backgroundColor: theme === "light" ? "#e3342f" : "#e3342f",
+                backgroundColor: "#e3342f",
                 color: "#fff",
               },
             }),
@@ -158,7 +165,6 @@ const ChatModal = ({
           }}
           classNamePrefix="react-select"
         />
-
         <div className="flex gap-5 items-center mt-5">
           <button
             type="button"
