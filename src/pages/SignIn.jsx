@@ -40,10 +40,16 @@ const Heading = () => (
 );
 
 const Form = () => {
-  const { login, loading } = useAuth();
+  const { login, loading, status } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (status === 400) {
+      setError("Invalid username or password");
+    }
+  }, [status]);
 
   useEffect(() => {
     const handleResize = () => {

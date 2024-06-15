@@ -5,6 +5,12 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    if (status !== null) {
+    }
+  }, [status]);
 
   useEffect(() => {
     const savedSession = JSON.parse(localStorage.getItem("session"));
@@ -81,6 +87,7 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ username, password }),
       });
+      setStatus(response.status);
 
       if (!response.ok) {
         throw new Error("Login failed");
@@ -140,6 +147,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         signUp,
         verifyEmail,
+        status,
       }}
     >
       {children}
