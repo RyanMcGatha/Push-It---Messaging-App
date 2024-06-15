@@ -11,6 +11,8 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
+import ResetPasswordForm from "./pages/ResetPasswordForm";
 
 const App = () => {
   const { session } = useAuth();
@@ -24,6 +26,14 @@ const App = () => {
     {
       path: "/signup",
       element: session ? <Navigate to="/home" /> : <SignUp />,
+    },
+    {
+      path: "/request-password-reset",
+      element: <RequestPasswordReset />,
+    },
+    {
+      path: "/reset-password/:token",
+      element: <ResetPasswordForm />,
     },
     {
       element: session ? <PrivateLayout /> : <Navigate to="/" />,

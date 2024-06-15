@@ -94,7 +94,7 @@ const Form = () => {
           <label htmlFor="password-input" className="block text-zinc-400">
             Password
           </label>
-          <a href="#" className="text-sm text-blue-400">
+          <a href="/request-password-reset" className="text-sm text-blue-400">
             Forgot?
           </a>
         </div>

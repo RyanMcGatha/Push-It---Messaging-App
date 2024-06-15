@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const AuthContext = createContext();
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
@@ -9,6 +14,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (status !== null) {
+      // Handle status change if needed
     }
   }, [status]);
 
@@ -23,27 +29,14 @@ export const AuthProvider = ({ children }) => {
   const signUp = async (email, username, fullName, password) => {
     setLoading(true);
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://push-it-backend.vercel.app/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            username,
-            fullname: fullName,
-            password,
-          }),
-        }
+        { email, username, fullname: fullName, password }
       );
 
-      if (!response.ok) {
+      if (response.status !== 201) {
         throw new Error("Sign up failed");
       }
-
-      const data = await response.json();
     } catch (error) {
       throw error;
     } finally {
@@ -53,24 +46,17 @@ export const AuthProvider = ({ children }) => {
 
   const resendVerificationEmail = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://push-it-backend.vercel.app/resend-verification",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-          body: JSON.stringify({ username: session.user.username }),
-        }
+        { username: session.user.username },
+        { headers: { Authorization: `Bearer ${session.token}` } }
       );
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Failed to resend verification email");
       }
 
-      const data = await response.json();
-      console.log(data.message);
+      console.log(response.data.message);
     } catch (error) {
       console.error("Error resending verification email:", error);
       alert("Error resending verification email. Please try again later.");
@@ -80,20 +66,17 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     setLoading(true);
     try {
-      const response = await fetch("https://push-it-backend.vercel.app/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await axios.post(
+        "https://push-it-backend.vercel.app/login",
+        { username, password }
+      );
       setStatus(response.status);
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Login failed");
       }
 
-      const data = await response.json();
+      const data = response.data;
       setSession(data);
       localStorage.setItem("session", JSON.stringify(data));
       window.location.reload();
@@ -113,21 +96,60 @@ export const AuthProvider = ({ children }) => {
   const verifyEmail = async (token) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://push-it-backend.vercel.app/verify-email?token=${token}`,
-        {
-          method: "GET",
-        }
+      const response = await axios.get(
+        `https://push-it-backend.vercel.app/verify-email?token=${token}`
       );
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Email verification failed");
       }
 
-      const updatedSession = await response.json();
+      const updatedSession = response.data;
       setSession(updatedSession);
       localStorage.setItem("session", JSON.stringify(updatedSession));
     } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const requestPasswordReset = async (email) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "https://push-it-backend.vercel.app/request-password-reset",
+        { email }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to send password reset link");
+      }
+
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error sending password reset link:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (token, newPassword) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "https://push-it-backend.vercel.app/reset-password",
+        { token, newPassword }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Password reset failed");
+      }
+
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error resetting password:", error);
       throw error;
     } finally {
       setLoading(false);
@@ -147,14 +169,12 @@ export const AuthProvider = ({ children }) => {
         logout,
         signUp,
         verifyEmail,
+        requestPasswordReset,
+        resetPassword,
         status,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  return useContext(AuthContext);
 };
