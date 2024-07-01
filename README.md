@@ -22,8 +22,7 @@ Push It is a messaging application designed to provide a secure and user-friendl
 ## Technologies Used
 
 - Backend:
-  - PostgreSQL, Neurelo
-  - Utilizes Neurelo's platform to generate REST and GraphQL APIs dynamically.
+  - PostgreSQL
 - Frontend:
   - React.js
   - Provides a responsive and interactive user interface.
