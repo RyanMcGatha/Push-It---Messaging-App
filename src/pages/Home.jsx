@@ -12,7 +12,7 @@ export const tabs = ["Ones", "Groups", "Add Chat"];
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [mobileAddChat, setMobileAddChat] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedChat, setSelectedChat] = useState("");
   const [selectedChatData, setSelectedChatData] = useState({});
   const { userData, username } = useUserProfile();
   const { theme } = useTheme();
@@ -74,6 +74,7 @@ const Home = () => {
           className={`hidden md:flex flex-col w-full md:w-25p h-50 md:h-full overflow-y-scroll no-scrollbar ${sidebarClasses}`}
         >
           <div className="flex flex-col items-center w-full p-5">
+            <div className="flex items-center gap-2">Chats</div>
             <div className="flex justify-around w-full mt-4 mb-4">
               {tabs.map((tab) => (
                 <Chip

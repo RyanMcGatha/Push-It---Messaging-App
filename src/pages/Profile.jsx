@@ -1,117 +1,105 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseConfig";
 import { useTheme } from "../contexts/ThemeContext";
 import MobileNav from "../components/MobileNav";
+import ProfilePicture from "../components/ProfilePicture";
+import ThemeToggle from "../components/ThemeToggle";
+import { toast } from "react-toastify";
 
 export const Profile = () => {
-  const { userData } = useUserProfile();
+  const { userData, isLoading: userDataLoading } = useUserProfile();
   const [profilePic, setProfilePic] = useState("");
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const { username } = useParams();
-  const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (userData) {
-      setProfilePic(userData?.profile_pic);
+      setProfilePic(userData.profile_pic);
     }
   }, [userData]);
 
-  const handleProfilePic = async (event) => {
-    setLoading(true);
+  const handleProfilePicUpdate = useCallback(
+    async (file) => {
+      if (!file) return;
 
-    const file = event.target.files[0];
+      setIsUploading(true);
+      const fileName = `${username}/${file.name}`;
 
-    if (!file) {
-      setLoading(false);
-      return;
-    }
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from("profile_pictures")
+          .upload(fileName, file, { upsert: true });
 
-    const fileName = `${username}/${file.name}`;
+        if (uploadError) throw uploadError;
 
-    try {
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("profile_pictures")
-        .upload(fileName, file, { upsert: true });
+        const { data: urlData, error: urlError } = supabase.storage
+          .from("profile_pictures")
+          .getPublicUrl(fileName);
 
-      if (uploadError) throw uploadError;
+        if (urlError) throw urlError;
 
-      const { data: urlData, error: urlError } = supabase.storage
-        .from("profile_pictures")
-        .getPublicUrl(fileName);
+        const response = await fetch(
+          "https://push-it-backend.vercel.app/profile-pic",
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, profilePic: urlData.publicUrl }),
+          }
+        );
 
-      if (urlError) throw urlError;
+        if (!response.ok) throw new Error("Failed to update profile pic");
 
-      const url = `https://push-it-backend.vercel.app/profile-pic`;
+        setProfilePic(urlData.publicUrl);
+        toast.success("Profile picture updated successfully!");
+      } catch (error) {
+        console.error("Error handling profile picture: ", error.message);
+        toast.error("Failed to update profile picture. Please try again.");
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [username]
+  );
 
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          username,
-          profilePic: urlData.publicUrl,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update profile pic");
-
-      setProfilePic(urlData.publicUrl);
-    } catch (error) {
-      console.error("Error handling profile picture: ", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (userDataLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div
-      className={`flex flex-col items-center justify-center w-full h-full p-5 ${
+      className={`flex flex-col min-h-screen ${
         theme === "light" ? "bg-white text-black" : "bg-[#16181c] text-white"
       }`}
     >
-      <div className="md:hidden flex self-end">
-        <MobileNav />
-      </div>
-      <div className="flex flex-col items-center w-full h-full justify-center p-5">
-        <div className="flex flex-col items-center gap-10">
-          <div className="flex flex-col items-center h-full w-full gap-5">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleProfilePic}
-              className="hidden"
-              ref={fileInputRef}
-            />
-            <img
-              src={profilePic || "default-profile-pic-url"}
-              alt="profile-pic"
-              className="w-40 h-40 rounded-full object-cover"
-            />
-            <button
-              onClick={() => fileInputRef.current.click()}
-              className={`bottom-0 right-0 p-2 rounded-lg ${
-                theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
-              }`}
-            >
-              {loading ? "Uploading..." : "Change Profile Picture"}
-            </button>
-          </div>
-          <h1 className="text-3xl font-bold capitalize">{userData.username}</h1>
-          <p className="text-lg">{userData.full_name}</p>
+      <header className="p-4">
+        <div className="md:hidden flex justify-end">
+          <MobileNav />
         </div>
-        <div className="flex flex-col items-center mt-8">
-          <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-lg ${
-              theme === "light" ? "bg-gray-200" : "bg-dark-lighter"
-            }`}
-          >
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
+      </header>
+      <main className="flex-grow flex flex-col items-center justify-center p-5">
+        <ProfilePicture
+          src={profilePic}
+          alt={`${userData.username}'s profile picture`}
+          onUpdate={handleProfilePicUpdate}
+          isUploading={isUploading}
+        />
+        <h1 className="text-3xl font-bold capitalize mt-6">
+          {userData.username}
+        </h1>
+        <p className="text-lg mt-2">{userData.full_name}</p>
+        <div className="mt-8">
+          <ThemeToggle />
         </div>
-      </div>
+      </main>
     </div>
   );
 };
+
+export default Profile;

@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 import RequestPasswordReset from "./pages/RequestPasswordReset";
 import ResetPasswordForm from "./pages/ResetPasswordForm";
-import { Maintenance } from "./pages/Maintenance";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const App = () => {
   const { session } = useAuth();
@@ -21,7 +21,31 @@ const App = () => {
   const routes = [
     {
       path: "/",
-      element: <Maintenance />,
+      element: session ? <Navigate to="/home" /> : <SignIn />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/signup",
+      element: session ? <Navigate to="/home" /> : <SignUp />,
+    },
+    {
+      path: "/verify-email/:token",
+      element: <VerifyEmail />,
+    },
+    {
+      path: "/request-password-reset",
+      element: <RequestPasswordReset />,
+    },
+    {
+      path: "/reset-password/:token",
+      element: <ResetPasswordForm />,
+    },
+    {
+      element: session ? <PrivateLayout /> : <Navigate to="/" />,
+      children: [
+        { path: "/home", element: <Home /> },
+        { path: "/:username", element: <Profile /> },
+      ],
     },
   ];
 

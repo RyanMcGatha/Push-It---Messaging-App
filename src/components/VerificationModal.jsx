@@ -9,7 +9,6 @@ export const VerificationModal = ({ isOpen, onClose }) => {
   const [countdown, setCountdown] = useState(0);
   const timeoutDuration = 60;
   const { is_verified } = useUserData();
-  console.log(is_verified);
 
   const handleResendEmail = async () => {
     setIsDisabled(true);
@@ -34,7 +33,7 @@ export const VerificationModal = ({ isOpen, onClose }) => {
       "session",
       JSON.stringify({
         ...session,
-        user: { ...session.user, is_verified },
+        user: { ...session?.user, is_verified },
       })
     );
 
