@@ -12,7 +12,7 @@ export const tabs = ["Ones", "Groups", "Add Chat"];
 const Home = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [mobileAddChat, setMobileAddChat] = useState(false);
-  const [selectedChat, setSelectedChat] = useState("");
+  const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatData, setSelectedChatData] = useState({});
   const { userData, username } = useUserProfile();
   const { theme } = useTheme();

@@ -32,45 +32,56 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
   const backgroundImage = useMotionTemplate`radial-gradient(150% 130% at 50% 0%, #1a1a24 60%, ${color})`;
 
   useEffect(() => {
-    const channel = supabase
-      .channel(`room.${selectedChat}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public" },
-        (payload) => {
-          setMessages((prevMessages) => [...prevMessages, payload.new]);
-        }
-      )
-      .subscribe();
+    if (selectedChat !== null) {
+      const fetchMessages = async () => {
+        const selectParams = encodeURIComponent(Number(selectedChat));
 
-    return () => {
-      channel.unsubscribe();
-    };
+        const url = `https://push-it-backend.vercel.app/messages?chat_id=${selectParams}`;
+
+        try {
+          const response = await fetch(url, { method: "GET" });
+          if (!response.ok) throw new Error("Failed to fetch messages");
+
+          const data = await response.json();
+          setMessages(data);
+        } catch (error) {
+          console.error("Fetch messages error:", error.message);
+        }
+      };
+
+      fetchMessages();
+    }
   }, [selectedChat]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const selectParams = encodeURIComponent(Number(selectedChat));
+    if (selectedChat !== null) {
+      const channel = supabase
+        .channel(`room.${selectedChat}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public" },
+          (payload) => {
+            setMessages((prevMessages) => [...prevMessages, payload.new]);
+          }
+        )
+        .subscribe();
 
-      const url = `https://push-it-backend.vercel.app/messages?chat_id=${selectParams}
-      `;
-
-      try {
-        const response = await fetch(url, { method: "GET" });
-        if (!response.ok) throw new Error("Failed to fetch messages");
-
-        const data = await response.json();
-        setMessages(data);
-      } catch (error) {
-        console.error("Fetch messages error:", error.message);
-      }
-    };
-
-    fetchMessages();
+      return () => {
+        channel.unsubscribe();
+      };
+    }
   }, [selectedChat]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
+
+    if (selectedChat === null) return;
 
     try {
       const response = await fetch(
@@ -111,12 +122,6 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
     }
   };
 
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }, [messages]);
-
   return (
     <>
       <motion.section
@@ -132,116 +137,125 @@ const Messages = ({ selectedChat, selectedChatData, userData, usersData }) => {
               : "bg-dark text-gray-100"
           }`}
         >
-          <div
-            style={{ height: "10%" }}
-            className={`flex items-center justify-between p-5 w-full border-b ${
-              theme === "light" ? "border-gray-300" : "border-gray-700"
-            }`}
-          >
-            <h2
-              className={`text-3xl font-semibold capitalize${
-                theme === "light" ? " text-gray-300" : " text-gray-100"
-              }`}
-            >
-              {selectedChatData.title || selectedChatData.chat_name}
-            </h2>
-
-            <div className="flex md:hidden z-50">
-              <MobileNav />
+          {selectedChat === null ? (
+            <div className="flex items-center justify-center h-full">
+              <h2 className="text-2xl">Please select a chat</h2>
             </div>
-          </div>
-
-          <div
-            ref={containerRef}
-            className="flex flex-col overflow-y-scroll z-10 no-scrollbar w-full p-5"
-            style={{ height: "85%" }}
-          >
-            {messages.map((msg) => (
+          ) : (
+            <>
               <div
-                key={
-                  msg.id || `${msg.chat_id}-${msg.timestamp}-${msg.user_name}`
-                }
-                className={`${
-                  msg.user_name === username ? "self-end" : "self-start"
-                } p-2 mb-4 rounded-lg w-fit flex flex-col max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl`}
+                style={{ height: "10%" }}
+                className={`flex items-center justify-between p-5 w-full border-b ${
+                  theme === "light" ? "border-gray-300" : "border-gray-700"
+                }`}
               >
-                <div
-                  className={`${
-                    msg.user_name === username ? "self-end" : "self-start"
-                  } flex items-center flex-col gap-2`}
+                <h2
+                  className={`text-3xl font-semibold capitalize${
+                    theme === "light" ? " text-gray-300" : " text-gray-100"
+                  }`}
                 >
-                  <img
-                    src={
-                      usersData && Array.isArray(usersData)
-                        ? usersData
-                            .filter((user) => user)
-                            .find((user) => user.username === msg.user_name)
-                            ?.profile_pic || "defaultProfilePicUrl"
-                        : "defaultProfilePicUrl"
-                    }
-                    alt={`${msg.user_name}'s profile`}
-                    className={`${
-                      msg.user_name === username ? "self-end" : "self-start"
-                    } w-10 h-10 rounded-full border border-gray-300`}
-                  />
-                  <p
-                    className={`text-sm ${
-                      theme === "light" ? "text-gray-500" : "text-gray-300"
-                    }`}
-                  >
-                    {msg.user_name} -{" "}
-                    {new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <span
-                    className={`${
-                      msg.user_name === username
-                        ? "bg-indigo-600 text-white rounded-tr-none"
-                        : theme === "light"
-                        ? "bg-gray-200 text-black"
-                        : "bg-gray-700 text-white rounded-tl-none"
-                    } flex w-fit p-3 mt-2 rounded-lg  `}
-                  >
-                    <p className="text-lg">{msg.message_text}</p>
-                  </span>
+                  {selectedChatData.title || selectedChatData.chat_name}
+                </h2>
+
+                <div className="flex md:hidden z-50">
+                  <MobileNav />
                 </div>
               </div>
-            ))}
-          </div>
 
-          <form
-            onSubmit={handleSendMessage}
-            style={{ eight: "5%" }}
-            className={`flex items-center p-4 border-t z-10 ${
-              theme === "light" ? "border-gray-300" : "border-gray-700"
-            }`}
-          >
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className={`flex-grow p-2 border ${
-                theme === "light"
-                  ? "border-gray-300 bg-gray-300"
-                  : "border-gray-700 bg-gray-700"
-              } rounded-lg`}
-              placeholder="Type your message..."
-            />
-            <button
-              type="submit"
-              className={`ml-2 p-2 ${
-                theme === "light"
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-700 text-white"
-              } rounded-lg`}
-            >
-              Send
-            </button>
-          </form>
+              <div
+                ref={containerRef}
+                className="flex flex-col overflow-y-scroll z-10 no-scrollbar w-full p-5"
+                style={{ height: "85%" }}
+              >
+                {messages.map((msg) => (
+                  <div
+                    key={
+                      msg.id ||
+                      `${msg.chat_id}-${msg.timestamp}-${msg.user_name}`
+                    }
+                    className={`${
+                      msg.user_name === username ? "self-end" : "self-start"
+                    } p-2 mb-4 rounded-lg w-fit flex flex-col max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl`}
+                  >
+                    <div
+                      className={`${
+                        msg.user_name === username ? "self-end" : "self-start"
+                      } flex items-center flex-col gap-2`}
+                    >
+                      <img
+                        src={
+                          usersData && Array.isArray(usersData)
+                            ? usersData
+                                .filter((user) => user)
+                                .find((user) => user.username === msg.user_name)
+                                ?.profile_pic || "defaultProfilePicUrl"
+                            : "defaultProfilePicUrl"
+                        }
+                        alt={`${msg.user_name}'s profile`}
+                        className={`${
+                          msg.user_name === username ? "self-end" : "self-start"
+                        } w-10 h-10 rounded-full border border-gray-300`}
+                      />
+                      <p
+                        className={`text-sm ${
+                          theme === "light" ? "text-gray-500" : "text-gray-300"
+                        }`}
+                      >
+                        {msg.user_name} -{" "}
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <span
+                        className={`${
+                          msg.user_name === username
+                            ? "bg-indigo-600 text-white rounded-tr-none"
+                            : theme === "light"
+                            ? "bg-gray-200 text-black"
+                            : "bg-gray-700 text-white rounded-tl-none"
+                        } flex w-fit p-3 mt-2 rounded-lg  `}
+                      >
+                        <p className="text-lg">{msg.message_text}</p>
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <form
+                onSubmit={handleSendMessage}
+                style={{ height: "5%" }}
+                className={`flex items-center p-4 border-t z-10 ${
+                  theme === "light" ? "border-gray-300" : "border-gray-700"
+                }`}
+              >
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className={`flex-grow p-2 border ${
+                    theme === "light"
+                      ? "border-gray-300 bg-gray-300"
+                      : "border-gray-700 bg-gray-700"
+                  } rounded-lg`}
+                  placeholder="Type your message..."
+                />
+                <button
+                  type="submit"
+                  className={`ml-2 p-2 ${
+                    theme === "light"
+                      ? "bg-blue-500 text-white"
+                      : "bg-blue-700 text-white"
+                  } rounded-lg`}
+                >
+                  Send
+                </button>
+              </form>
+            </>
+          )}
         </div>
         <div className="absolute inset-0 z-0 ">
           <Canvas>
